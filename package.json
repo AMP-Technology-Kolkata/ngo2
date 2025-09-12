@@ -1,0 +1,35 @@
+{
+  "name": "govermentapp",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.5.2",
+    "@fortawesome/free-brands-svg-icons": "^6.5.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
+    "@splidejs/react-splide": "^0.7.12",
+    "axios": "^1.7.2",
+    "bootstrap": "^5.3.3",
+    "classnames": "^2.5.1",
+    "framer-motion": "^11.11.17",
+    "moment": "^2.30.1",
+    "next": "14.2.3",
+    "react": "^18",
+    "react-bootstrap": "^2.10.2",
+    "react-countup": "^6.5.3",
+    "react-dom": "^18",
+    "react-icons": "^5.2.1",
+    "react-intersection-observer": "^9.13.1",
+    "react-player": "^2.16.0",
+    "sweetalert": "^2.1.2"
+  },
+  "devDependencies": {
+    "eslint": "^8",
+    "eslint-config-next": "14.2.3"
+  }
+}

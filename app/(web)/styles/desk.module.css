@@ -1,0 +1,56 @@
+.deskwrpper {
+  margin: 100px 0 100px 0;
+}
+.chairmanDesk {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  justify-content: space-evenly;
+  width: 80%;
+  margin: 0 auto;
+}
+.textSection {
+  margin-right: 20px;
+  width: 70%;
+}
+.textSection h2 {
+  margin-bottom: 5px;
+}
+.textSection h3 {
+  margin-top: 0;
+  color: #888;
+}
+.deskDetails {
+  margin: 0;
+}
+.imageSection {
+  flex-shrink: 0;
+  border: 6px solid white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.24);
+}
+@media screen and (max-width: 799px) {
+  .chairmanDesk {
+    flex-direction: column;
+  }
+  .textSection {
+    width: 100%;
+  }
+  .deskDetails {
+    margin: 2px;
+  }
+  .imageSection {
+    margin-top: 20px;
+  }
+  .textSection h2 {
+    font-size: 1.5em;
+  }
+  .textSection h4 {
+    font-size: 1.2em;
+  }
+  .textSection p {
+    font-size: 14px;
+  }
+}

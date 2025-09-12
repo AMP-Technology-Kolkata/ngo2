@@ -1,0 +1,50 @@
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+  margin: 50px 0;
+}
+
+.card {
+  background: linear-gradient(to bottom, #ffffff, #e0e0e0);
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 180px;
+  margin: 10px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.number {
+  font-size: 28px;
+  color: #000;
+  margin: 10px 0;
+}
+
+.description {
+  color: #555;
+  font-size: 14px;
+  line-height: 1.2;
+}
+@media (max-width: 600px) {
+  .grid {
+    gap: 10px;
+  }
+
+  .card {
+    width: calc(50% - 20px);
+    margin: 10px 5px;
+  }
+  .number {
+    font-size: 20px;
+  }
+
+  .description {
+    font-size: 13px;
+  }
+}

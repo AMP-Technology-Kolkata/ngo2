@@ -1,0 +1,44 @@
+.float {
+  position: fixed;
+  width: 50px;
+  height: 50px;
+  bottom: 40px;
+  right: 40px;
+  background-color: #25d366;
+  color: #fff;
+  border-radius: 50px;
+  text-align: center;
+  font-size: 30px;
+  box-shadow: 2px 2px 3px #999;
+  z-index: 1000;
+}
+
+.myFloat {
+  margin-top: 2px;
+}
+.floatArrow {
+  position: fixed;
+  width: 50px;
+  height: 50px;
+  bottom: 120px;
+  right: 40px;
+  background-color: #3693be;
+  color: #fff;
+  border-radius: 50px;
+  text-align: center;
+  font-size: 30px;
+  box-shadow: 2px 2px 3px #999;
+  z-index: 1000;
+}
+.myFloatArrow {
+  margin-top: 2px;
+}
+/* 
+@media (max-width: 992px) {
+  .float {
+    right: 60px;
+  }
+  .floatArrow {
+    right: 60px;
+  }
+} */

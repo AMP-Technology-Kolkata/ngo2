@@ -1,0 +1,94 @@
+.loginWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
+}
+.loginForm {
+  width: 90%;
+  max-width: 450px;
+  background: #fff;
+  padding: 35px 35px;
+  box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
+  border: 1px solid rgba(122, 105, 211, 0.15);
+  border-radius: 10px;
+  margin: 10px 0;
+}
+
+.formTitle {
+  text-align: center;
+  font-size: 30px;
+  font-weight: 600;
+  margin: 20px 0px 30px;
+  color: #4c81ff;
+}
+
+.formInput label,
+.captcha label {
+  display: block;
+  font-size: 15px;
+  color: #111;
+  margin-bottom: 10px;
+}
+
+.formInput input {
+  width: 96%;
+  padding: 10px;
+  outline: none;
+  border-radius: 4px;
+  border: 1px solid #888;
+  font-size: 15px;
+}
+
+.preview {
+  color: #555;
+  width: 100%;
+  text-align: center;
+  height: 40px;
+  line-height: 40px;
+  letter-spacing: 8px;
+  border: 1px dashed #888;
+  border-radius: 4px;
+  font-family: "monospace";
+}
+
+.captchaForm {
+  display: flex;
+}
+
+.captchaForm input {
+  width: 100%;
+  outline: none;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #888;
+}
+
+.captchaRefresh {
+  width: 40px;
+  border: none;
+  outline: none;
+  background: #888;
+  border-radius: 4px;
+  color: #eee;
+  cursor: pointer;
+}
+
+.loginBtn {
+  margin-top: 5px;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  text-transform: uppercase;
+  background: #4c81ff;
+  border-radius: 5px;
+  color: #fff;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.loginBtn:hover {
+  opacity: 0.8;
+}

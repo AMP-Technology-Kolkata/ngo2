@@ -1,0 +1,55 @@
+.two-sections {
+  display: flex;
+  justify-content: space-around;
+  margin: 0 auto;
+  /* width: 1200px; */
+}
+.notice-section,
+.image-slider-section {
+  flex: 1;
+}
+.image-slider-section {
+  background-color: #f2f2f2;
+}
+
+.icon-box {
+  position: relative;
+  transition: transform 0.4s ease, box-shadow 0.4s ease, z-index 0s;
+}
+.icon-box {
+  position: relative;
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.5s cubic-bezier(0.25, 1, 0.5, 1), z-index 0s;
+  will-change: transform, box-shadow;
+}
+
+.icon-box:hover,
+.icon-box:active {
+  transform: translateY(-15px) scale(1.15);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+}
+
+.icon-box:hover {
+  background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+  border: 2px solid #fff;
+}
+
+.icon {
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), color 0.3s;
+}
+
+.icon-box:hover .icon,
+.icon-box:active .icon {
+  transform: rotate(25deg) scale(1.2);
+  color: #ff6b6b;
+}
+
+.icon-box h4,
+.icon-box p {
+  transition: color 0.3s ease;
+}
+
+.icon-box:hover h4,
+.icon-box:hover p {
+  color: #fff;
+}

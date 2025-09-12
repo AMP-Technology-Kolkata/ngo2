@@ -1,0 +1,19 @@
+.faqSection {
+  padding: 90px 0;
+}
+
+.faqTitle {
+  color: #333;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.faqDescription {
+  color: #666;
+  font-size: 18px;
+  line-height: 38px;
+}
+.accordion {
+  height: 170px;
+  overflow-y: auto;
+}
