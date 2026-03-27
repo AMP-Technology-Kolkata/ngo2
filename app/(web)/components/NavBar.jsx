@@ -1,8 +1,24 @@
 "use client";
-import { useRef, useState, useEffect } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useRef, useState } from "react";
+
+function NavLink({ href, className = "", children, onClick, active, activeClassName = "nav-link-current", ...rest }) {
+  const pathname = usePathname();
+  const isActive = typeof active === "boolean" ? active : pathname === href;
+  const classes = `${className} ${isActive ? `active ${activeClassName}` : ""}`.trim();
+
+  return (
+    <Link href={href} className={classes} aria-current={isActive ? "page" : undefined} onClick={onClick} {...rest}>
+      {children}
+    </Link>
+  );
+}
 
 export default function NavBar() {
   const navbarRef = useRef(null);
+  const pathname = usePathname();
+  const isGalleryRoute = pathname === "/gallery" || pathname === "/videos";
   const [isCollapsed, setIsCollapsed] = useState(true);
 
   const handleToggle = () => {
@@ -24,6 +40,14 @@ export default function NavBar() {
     setIsDropdownOpen(false);
   };
 
+  const handleNavClick = () => {
+    handleDropdownClose();
+    if (!isCollapsed && navbarRef.current) {
+      navbarRef.current.classList.remove("show");
+      setIsCollapsed(true);
+    }
+  };
+
   return (
     <nav className="navbar navbar-expand-lg sticky-top navcontent" style={{ backgroundColor: "#192f59" }}>
       <div className="container">
@@ -41,56 +65,63 @@ export default function NavBar() {
         <div className={`collapse navbar-collapse ${!isCollapsed ? "show" : ""}`} id="navbarSupportedContent" ref={navbarRef}>
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
-              <a className="nav-link active fw-bold" aria-current="page" href="/">
+              <NavLink className="nav-link fw-bold" href="/" onClick={handleNavClick}>
                 Home
-              </a>
+              </NavLink>
             </li>
             <li className="nav-item">
-              <a className="nav-link fw-bold" href="/About">
+              <NavLink className="nav-link fw-bold" href="/About" onClick={handleNavClick}>
                 About Us
-              </a>
+              </NavLink>
             </li>
             <li className="nav-item">
-              <a className="nav-link fw-bold" href="/service">
+              <NavLink className="nav-link fw-bold" href="/service" onClick={handleNavClick}>
                 Services
-              </a>
+              </NavLink>
             </li>
 
             <li className="nav-item dropdown">
-              <a className="nav-link dropdown-toggle fw-bold" href="#" role="button" id="dropdownGallery" aria-expanded={isDropdownOpen} onClick={handleDropdownToggle}>
+              <button
+                className={`nav-link dropdown-toggle fw-bold d-flex align-items-center ${isGalleryRoute ? "active nav-link-current" : ""}`}
+                type="button"
+                id="dropdownGallery"
+                aria-expanded={isDropdownOpen}
+                onClick={handleDropdownToggle}
+                style={{ background: "transparent", border: 0 }}
+              >
                 Gallery
-              </a>
+              </button>
               <ul className={`dropdown-menu${isDropdownOpen ? " show" : ""}`} aria-labelledby="dropdownGallery">
                 <li>
-                  <a className="dropdown-item" href="/gallery" style={{ fontWeight: "bold" }} onClick={handleDropdownClose}>
+                  <NavLink className="dropdown-item" href="/gallery" style={{ fontWeight: "bold" }} onClick={handleNavClick}>
                     Photos
-                  </a>
+                  </NavLink>
                 </li>
                 <li>
-                  <a className="dropdown-item" href="/videos" style={{ fontWeight: "bold" }} onClick={handleDropdownClose}>
+                  <NavLink className="dropdown-item" href="/videos" style={{ fontWeight: "bold" }} onClick={handleNavClick}>
                     Videos
-                  </a>
+                  </NavLink>
                 </li>
               </ul>
             </li>
             <li className="nav-item">
-              <a className="nav-link fw-bold" href="/Team">
+              <NavLink className="nav-link fw-bold" href="/Team" onClick={handleNavClick}>
                 Team
-              </a>
+              </NavLink>
             </li>
             <li className="nav-item">
-              <a className="nav-link fw-bold" href="/contact">
+              <NavLink className="nav-link fw-bold" href="/contact" onClick={handleNavClick}>
                 Contact
-              </a>
+              </NavLink>
             </li>
           </ul>
-          <a className="grievance" href="/grievance">
+          <NavLink className="grievance" href="/grievance" onClick={handleNavClick} activeClassName="button-link-current">
             Grievance
-          </a>
+          </NavLink>
           {/* <a className="getstarted" href="/login">
             Admin Login
           </a> */}
-          <a className="getstarted" href="http://wbpms.in/citizen" target="_blank">
+          <a className="getstarted" href="http://wbpms.in/citizen" target="_blank" rel="noopener noreferrer">
             Citizen Services
           </a>
         </div>

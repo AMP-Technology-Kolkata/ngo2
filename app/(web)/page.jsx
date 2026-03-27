@@ -1,8 +1,6 @@
-import Image from "next/image";
 import styles from "./page.module.css";
 import About from "./About/page";
 import Hero from "./Hero/page";
-import StaticImageSlider from "./Ads/page";
 import Team from "./Team/page";
 import ChairmanDesk from "./Desk/page";
 import Notifications from "./Notificatons/page";
@@ -61,7 +59,6 @@ export default async function Home() {
       <ChairmanDesk showFullDescription={false} />
       <Notifications />
       <GallerySmall />
-      {/* <StaticImageSlider /> */}
       <Ads />
       <ServiceGrid />
       <Team />

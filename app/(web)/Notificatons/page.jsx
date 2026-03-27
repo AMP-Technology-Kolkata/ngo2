@@ -1,5 +1,4 @@
 import TenderNotifications from "../components/Notification";
-import Tender from "../components/Tender";
 
 async function getNoticeData() {
   try {
@@ -76,15 +75,17 @@ async function getCountData() {
 export default async function Notice() {
   const notices = await getNoticeData();
   const count = await getCountData();
+  const noticeItems = notices?.data?.data || [];
 
-  const noticeActive = notices && notices.data?.data?.length > 0;
+  if (!noticeItems.length) {
+    return null;
+  }
 
   return (
     <>
       <TenderNotifications
-        data={notices?.data?.data || []}
+        data={noticeItems}
         bgImgae={notices?.bgimage}
-        noticeActive={noticeActive}
         count={count?.data?.counter}
       />
     </>

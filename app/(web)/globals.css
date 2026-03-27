@@ -214,6 +214,38 @@
 .navbar .navbar-nav .nav-link.active {
   color: var(--light);
 }
+
+.navbar .navbar-nav .nav-link.nav-link-current {
+  color: #ffffff;
+  font-weight: 800 !important;
+  position: relative;
+}
+
+.navbar .navbar-nav .nav-link.nav-link-current::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  width: 70%;
+  height: 2px;
+  border-radius: 2px;
+  background: #7ec7ff;
+}
+
+.navbar .grievance.button-link-current,
+.navbar .grievance.button-link-current:focus {
+  background: #ffffff;
+  color: #3e5c99;
+  font-weight: 800;
+  border-color: #ffffff;
+}
+
+.navbar .grievance.button-link-current:hover,
+.navbar .grievance.button-link-current:focus:hover {
+  background: #ffffff;
+  color: #3e5c99;
+}
 .navcontent {
   padding: 0 !important;
 }

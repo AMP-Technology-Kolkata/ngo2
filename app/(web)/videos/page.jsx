@@ -19,12 +19,14 @@ const getProjectData = async () => {
 
 export default async function videosPage() {
   const videos = await getProjectData();
-  let videosActive = true;
-  if (!videos || videos.data?.length === 0) videosActive = false;
+
+  if (!videos || !Array.isArray(videos.data) || videos.data.length === 0) {
+    return null;
+  }
 
   return (
     <div>
-      <VideoGallery data={videos?.data || []} active={videosActive} />
+      <VideoGallery data={videos.data} />
     </div>
   );
 }

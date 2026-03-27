@@ -39,5 +39,10 @@ async function getAdsData() {
 export default async function Ads() {
   const ads = await getAdsData();
   const adsActive = ads && ads.data?.length > 0;
+
+  if (!adsActive) {
+    return null;
+  }
+
   return <StaticImageSlider data={ads?.data} active={adsActive} />;
 }

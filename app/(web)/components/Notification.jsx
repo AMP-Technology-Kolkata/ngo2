@@ -1,22 +1,56 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import moment from "moment";
 import CountUp from "react-countup";
 import { useInView } from "react-intersection-observer";
 
 const TenderNotifications = ({ data, bgImgae = "", count = [] }) => {
+  const normalizeValue = (value) => {
+    if (typeof value !== "string") return "";
+    const trimmed = value.trim();
+    if (!trimmed || trimmed.toLowerCase() === "null" || trimmed.toLowerCase() === "undefined") {
+      return "";
+    }
+    return trimmed;
+  };
+
+  const buildPublicUrl = (value) => {
+    const cleaned = normalizeValue(value).replace(/^public\//, "");
+    const base = normalizeValue(process.env.NEXT_PUBLIC_BACKPUBLIC).replace(/\/$/, "");
+
+    if (!cleaned) return "";
+    if (/^https?:\/\//i.test(cleaned)) return cleaned;
+    if (!base) return "";
+
+    return `${base}/${cleaned.replace(/^\/+/, "")}`;
+  };
+
   const [activeTab, setActiveTab] = useState("tender");
   const [ref, inView] = useInView({
     triggerOnce: false,
     threshold: 0.2,
   });
+  const marqueeRef = useRef(null);
+
+  const safeData = Array.isArray(data) ? data : [];
+  const hasTender = safeData.some((item) => item?.type === "tender");
+  const hasNotice = safeData.some((item) => item?.type === "notice");
 
   useEffect(() => {
-    if (inView) {
+    if (activeTab === "tender" && !hasTender && hasNotice) {
+      setActiveTab("notice");
     }
-  }, [inView]);
+    if (activeTab === "notice" && !hasNotice && hasTender) {
+      setActiveTab("tender");
+    }
+  }, [activeTab, hasTender, hasNotice]);
 
-  const filteredData = data.filter((item) => item.type === activeTab);
+  if (!hasTender && !hasNotice) {
+    return null;
+  }
+
+  const filteredData = safeData.filter((item) => item.type === activeTab);
+  const backgroundImageUrl = buildPublicUrl(bgImgae);
 
   const chunkedStats = [];
   for (let i = 0; i < count?.length; i += 4) {
@@ -28,27 +62,31 @@ const TenderNotifications = ({ data, bgImgae = "", count = [] }) => {
       className="tender-notifications"
       ref={ref}
       style={{
-        backgroundImage: `url(${process.env.NEXT_PUBLIC_BACKPUBLIC}/${bgImgae?.slice(7)})`,
+        backgroundImage: backgroundImageUrl ? `url(${backgroundImageUrl})` : "none",
       }}
     >
       {/* Left Section */}
       <div className="left-section">
         <div className="tabs">
-          <button className={activeTab === "tender" ? "active" : ""} onClick={() => setActiveTab("tender")}>
-            TENDER
-          </button>
-          <button className={activeTab === "notice" ? "active" : ""} onClick={() => setActiveTab("notice")}>
-            NOTICE
-          </button>
+          {hasTender && (
+            <button className={activeTab === "tender" ? "active" : ""} onClick={() => setActiveTab("tender")}>
+              TENDER
+            </button>
+          )}
+          {hasNotice && (
+            <button className={activeTab === "notice" ? "active" : ""} onClick={() => setActiveTab("notice")}>
+              NOTICE
+            </button>
+          )}
         </div>
         <div className="marquee-section">
           <marquee
+            ref={marqueeRef}
             direction="up"
-            id="notice"
-            scrollAmount="3"
+            scrollamount="3"
             style={{ height: "100%", background: "#f2f2f2", padding: "10px" }}
-            onMouseOver={() => document.getElementById("notice").stop()}
-            onMouseOut={() => document.getElementById("notice").start()}
+            onMouseOver={() => marqueeRef.current?.stop()}
+            onMouseOut={() => marqueeRef.current?.start()}
           >
             {filteredData.map((item, index) => (
               <div key={index} className="notice-card">
@@ -58,7 +96,7 @@ const TenderNotifications = ({ data, bgImgae = "", count = [] }) => {
                     {/* <span className="new-blink">New*</span> */}
                     <img src="/new.gif" alt="New" className="new-blink" />
                   </p>
-                  <a href={`${process.env.NEXT_PUBLIC_BACKPUBLIC}/${item.link?.slice(7)}`} className="notice-link" target="_blank" rel="noopener noreferrer">
+                  <a href={buildPublicUrl(item.link) || "#"} className="notice-link" target="_blank" rel="noopener noreferrer">
                     View
                   </a>
                 </div>
@@ -76,7 +114,7 @@ const TenderNotifications = ({ data, bgImgae = "", count = [] }) => {
             <div className="stat-row" key={index}>
               <p>{stat.text}</p>
               <h2>
-                <CountUp end={stat.value} duration={2} start={inView ? null : 0} />
+                <CountUp end={Number(stat.value) || 0} duration={2} start={inView ? null : 0} />
               </h2>
             </div>
           ))}

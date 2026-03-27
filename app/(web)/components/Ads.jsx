@@ -6,6 +6,24 @@ import { Splide, SplideSlide } from "@splidejs/react-splide";
 import "@splidejs/react-splide/css";
 
 const StaticImageSlider = ({ data = [] }) => {
+  const normalizeImageSrc = (src) => {
+    if (typeof src !== "string") return "";
+    const cleaned = src.trim();
+    if (!cleaned || cleaned.toLowerCase() === "null" || cleaned.toLowerCase() === "undefined") {
+      return "";
+    }
+    if (/^https?:\/\//i.test(cleaned) || cleaned.startsWith("/")) {
+      return cleaned;
+    }
+    return `/${cleaned.replace(/^\/+/, "")}`;
+  };
+
+  const validImages = (data || []).filter((item) => normalizeImageSrc(item?.image));
+
+  if (!validImages.length) {
+    return null;
+  }
+
   return (
     <div className="ads-slider-container">
       <Splide
@@ -25,16 +43,16 @@ const StaticImageSlider = ({ data = [] }) => {
           },
         }}
       >
-        {data.map((image, index) => (
+        {validImages.map((image, index) => (
           <SplideSlide key={index}>
             <div className="slider-card">
               <div className="slider-card-image">
                 <div className="image-wrapper">
                   <Image
                     className="slider-image"
-                    src={image?.image}
+                    src={normalizeImageSrc(image?.image)}
                     alt={`Image ${index + 1}`}
-                    layout="fill"
+                    fill
                   />
                 </div>
               </div>

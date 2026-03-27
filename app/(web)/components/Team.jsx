@@ -125,18 +125,26 @@ import "@splidejs/react-splide/css";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 
 const TeamSection = ({ data = [], active }) => {
+  const members = Array.isArray(data) ? data : [];
+
+  if (!members.length) {
+    return null;
+  }
+
+  const shouldLoop = members.length > 3;
+
   const settings = {
-    type: "loop",
-    rewind: true,
+    type: shouldLoop ? "loop" : "slide",
+    rewind: shouldLoop,
     perMove: 1,
     pagination: false,
-    arrows: true,
-    autoplay: true,
+    arrows: shouldLoop,
+    autoplay: shouldLoop,
     interval: 2500,
     gap: "1rem",
-    perPage: 3,
+    perPage: Math.min(3, members.length),
     breakpoints: {
-      1200: { perPage: 2 },
+      1200: { perPage: Math.min(2, members.length) },
       768: { perPage: 1 },
     },
   };
@@ -158,7 +166,7 @@ const TeamSection = ({ data = [], active }) => {
           </div>
         </div>
         <Splide options={settings}>
-          {data.map((member, index) => (
+          {members.map((member, index) => (
             <SplideSlide key={index}>
               <div className="card border-0 mb-3 w-100">
                 <div className="row g-0 align-items-center bg-light p-3 rounded teamwrap">
