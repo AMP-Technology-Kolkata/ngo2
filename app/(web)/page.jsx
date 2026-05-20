@@ -20,9 +20,7 @@ async function getData() {
         "x-api-key": process.env.API_KEY,
         "office-id": process.env.OFFICE,
       },
-      next: {
-        revalidate: 1000,
-      },
+      cache: "no-store",
     });
     officeData = await officeData.json();
     const isActive = officeData.data?.enabled_services?.includes("faq");
@@ -34,9 +32,7 @@ async function getData() {
         "x-api-key": process.env.API_KEY,
         "office-id": process.env.OFFICE,
       },
-      next: {
-        revalidate: 1000,
-      },
+      cache: "no-store",
     });
 
     if (!res.ok) {

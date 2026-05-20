@@ -22,7 +22,7 @@ async function getAdsData() {
         "x-api-key": process.env.API_KEY,
         "office-id": process.env.OFFICE,
       },
-      revalidate: 1000,
+      cache: "no-store",
     });
 
     if (!res.ok) {

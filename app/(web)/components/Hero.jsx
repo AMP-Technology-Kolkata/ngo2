@@ -48,16 +48,16 @@ const HeroSection = ({ data = "" }) => {
       <div
         className="bannervideo"
         style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
           position: "relative",
-          width: "100%",
-          aspectRatio: "16 / 9",
-          overflow: "hidden",
           backgroundColor: "#000",
         }}
       >
-        <div style={{ width: "100%", height: "100%", position: "absolute", inset: 0 }}>
+        <div style={{ width: "100%", height: "100%" }}>
           <ReactPlayer
-            className="hero-react-player"
             url={data}
             playing={true}
             controls
@@ -65,17 +65,6 @@ const HeroSection = ({ data = "" }) => {
             loop
             width="100%"
             height="100%"
-            config={{
-              file: {
-                attributes: {
-                  style: {
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                  },
-                },
-              },
-            }}
           />
         </div>
       </div>

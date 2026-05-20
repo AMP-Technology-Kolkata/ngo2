@@ -7,9 +7,7 @@ async function getData() {
       "x-api-key": process.env.API_KEY,
       "office-id": process.env.OFFICE,
     },
-    next: {
-        revalidate: 1000,
-      },
+    cache: "no-store",
   });
   if (!res.ok) {
     return res.statusText;
@@ -22,9 +20,7 @@ async function getTitleData() {
       "x-api-key": process.env.API_KEY,
       "office-id": process.env.OFFICE,
     },
-    next: {
-        revalidate: 1000,
-      },
+    cache: "no-store",
   });
   if (!res.ok) {
     return res.statusText;
@@ -38,49 +34,38 @@ export default async function ChairmanDesk({ showFullDescription = true }) {
   const title = titeldata?.data?.people || " Desk";
 
   return (
-    <section className="backimge chairman-section">
+    <div className="backimge">
       <div className={styles.deskwrpper}>
-        <div className={styles.sectionHeader}>
-          <span className={styles.sectionKicker}>Leadership</span>
-          <h2 className={styles.sectionTitle}>{title}</h2>
-          <p className={styles.sectionSubtitle}>A brief message from the leadership team presented in a clean, public-facing format.</p>
-        </div>
-
-        {!data?.length && <div className={styles.emptyState}>Chairman desk information is not available right now.</div>}
-
         {data?.map((person, index) => (
           <div key={index} className={styles.chairmanDesk}>
-            <div className={styles.personMeta}>
-              <span className={styles.nameTag}>Chairman Desk</span>
-              <h3 className={styles.personName}>{person.name}</h3>
+            <div className={styles.textSection}>
+              <h2 className="display-10 fw-bold" style={{ color: "#192f59" }}>
+                {title}
+              </h2>
+              <h4 style={{ color: "#192f59" }}>{person.name}</h4>
+
               <p className={styles.deskDetails}>
                 {showFullDescription
                   ? person.about
-                  : `${person.about?.slice(0, 500) || ""}...`}
+                  : `${person.about.slice(0, 500)}...`}
                 {!showFullDescription && (
-                  <a href="/Desk" className={styles.readMoreLink}>
+                  <a href="/Desk" style={{ color: "blue", marginLeft: "5px" }}>
                     Read More
                   </a>
                 )}
               </p>
-              <div className={styles.featureRow}>
-                <span className={styles.featureChip}>Public Leadership</span>
-                <span className={styles.featureChip}>Citizen Message</span>
-                <span className={styles.featureChip}>Official Desk</span>
-              </div>
             </div>
             <div className={styles.imageSection}>
               <Image
                 src={`${process.env.BACKPUBLIC}/${person.image?.slice(7)}`}
                 alt={person.name}
-                width={260}
-                height={320}
-                className={styles.portrait}
+                width={200}
+                height={250}
               />
             </div>
           </div>
         ))}
       </div>
-    </section>
+    </div>
   );
 }

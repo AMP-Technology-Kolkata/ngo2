@@ -8,7 +8,7 @@ async function getData() {
         "office-id": process.env.OFFICE,
       },
       next: {
-        revalidate: 1000,
+        revalidate: 3000,
       },
     });
     officeData = await officeData.json();
@@ -21,9 +21,7 @@ async function getData() {
         "x-api-key": process.env.API_KEY,
         "office-id": process.env.OFFICE,
       },
-      next: {
-        revalidate: 1000,
-      },
+      cache: "no-store",
     });
 
     if (!res.ok) {

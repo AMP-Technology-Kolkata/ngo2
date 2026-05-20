@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 
 function NavLink({ href, className = "", children, onClick, active, activeClassName = "nav-link-current", ...rest }) {
   const pathname = usePathname();
@@ -16,14 +16,21 @@ function NavLink({ href, className = "", children, onClick, active, activeClassN
 }
 
 export default function NavBar() {
+  const navbarRef = useRef(null);
   const pathname = usePathname();
   const isGalleryRoute = pathname === "/gallery" || pathname === "/videos";
   const [isCollapsed, setIsCollapsed] = useState(true);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleToggle = () => {
+    if (isCollapsed) {
+      navbarRef.current.classList.add("show");
+    } else {
+      navbarRef.current.classList.remove("show");
+    }
     setIsCollapsed(!isCollapsed);
   };
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleDropdownToggle = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -33,18 +40,16 @@ export default function NavBar() {
     setIsDropdownOpen(false);
   };
 
-  useEffect(() => {
-    setIsCollapsed(true);
-    setIsDropdownOpen(false);
-  }, [pathname]);
-
   const handleNavClick = () => {
     handleDropdownClose();
-    setIsCollapsed(true);
+    if (!isCollapsed && navbarRef.current) {
+      navbarRef.current.classList.remove("show");
+      setIsCollapsed(true);
+    }
   };
 
   return (
-    <nav className="navbar navbar-expand-lg sticky-top navcontent" aria-label="Primary navigation">
+    <nav className="navbar navbar-expand-lg sticky-top navcontent" style={{ backgroundColor: "#192f59" }}>
       <div className="container">
         <button
           className="navbar-toggler ms-auto"
@@ -53,10 +58,11 @@ export default function NavBar() {
           aria-expanded={!isCollapsed}
           aria-label="Toggle navigation"
           onClick={handleToggle}
+          style={{ backgroundColor: "white" }}
         >
           <span className="navbar-toggler-icon"></span>
         </button>
-        <div className={`collapse navbar-collapse ${!isCollapsed ? "show" : ""}`} id="navbarSupportedContent">
+        <div className={`collapse navbar-collapse ${!isCollapsed ? "show" : ""}`} id="navbarSupportedContent" ref={navbarRef}>
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
               <NavLink className="nav-link fw-bold" href="/" onClick={handleNavClick}>
@@ -81,17 +87,18 @@ export default function NavBar() {
                 id="dropdownGallery"
                 aria-expanded={isDropdownOpen}
                 onClick={handleDropdownToggle}
+                style={{ background: "transparent", border: 0 }}
               >
                 Gallery
               </button>
               <ul className={`dropdown-menu${isDropdownOpen ? " show" : ""}`} aria-labelledby="dropdownGallery">
                 <li>
-                  <NavLink className="dropdown-item" href="/gallery" onClick={handleNavClick}>
+                  <NavLink className="dropdown-item" href="/gallery" style={{ fontWeight: "bold" }} onClick={handleNavClick}>
                     Photos
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink className="dropdown-item" href="/videos" onClick={handleNavClick}>
+                  <NavLink className="dropdown-item" href="/videos" style={{ fontWeight: "bold" }} onClick={handleNavClick}>
                     Videos
                   </NavLink>
                 </li>
@@ -111,6 +118,9 @@ export default function NavBar() {
           <NavLink className="grievance" href="/grievance" onClick={handleNavClick} activeClassName="button-link-current">
             Grievance
           </NavLink>
+          {/* <a className="getstarted" href="/login">
+            Admin Login
+          </a> */}
           <a className="getstarted" href="http://wbpms.in/citizen" target="_blank" rel="noopener noreferrer">
             Citizen Services
           </a>
