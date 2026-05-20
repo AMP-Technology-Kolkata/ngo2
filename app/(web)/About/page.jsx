@@ -1,52 +1,73 @@
+export const dynamic = "force-dynamic";
+
 import React from "react";
 import Aboutus from "../components/About";
+
 async function getAboutData() {
-  const res = await fetch(process.env.BACKLINK + "/public/about", {
-    headers: {
-      "x-api-key": process.env.API_KEY,
-      "office-id": process.env.OFFICE,
-    },
-    cache: "no-store",
-  });
-  if (!res.ok) {
-    return res.statusText;
-  }
-  return res.json();
-}
-async function getData() {
   try {
-    let officeData = await fetch(`${process.env.BACKLINK}/public/officeData`, {
-      headers: {
-        "x-api-key": process.env.API_KEY,
-        "office-id": process.env.OFFICE,
-      },
-      cache: "no-store",
-    });
-    if (!officeData.ok) {
-      return console.error(`Failed to fetch office data: ${res.statusText}`);
+    const res = await fetch(
+      `${process.env.BACKLINK}/public/about`,
+      {
+        headers: {
+          "x-api-key": process.env.API_KEY,
+          "office-id": process.env.OFFICE,
+        },
+        cache: "no-store",
+      }
+    );
+
+    if (!res.ok) {
+      console.error("About API Error:", res.statusText);
+      return null;
     }
 
-    return officeData.json();
+    return await res.json();
   } catch (error) {
-    console.error("Error:", error.message);
+    console.error("About fetch error:", error.message);
     return null;
   }
 }
-export default async function About({ showFullDescription = true }) {
-  const data = await getAboutData();
-  if (typeof data === "string") {
-    return <div>Error: {data}</div>;
-  }
 
-  const aboutData = data?.data;
-  const officeData = await getData();
-  const officeName = officeData?.data.name;
+async function getOfficeData() {
+  try {
+    const res = await fetch(
+      `${process.env.BACKLINK}/public/officeData`,
+      {
+        headers: {
+          "x-api-key": process.env.API_KEY,
+          "office-id": process.env.OFFICE,
+        },
+        cache: "no-store",
+      }
+    );
+
+    if (!res.ok) {
+      console.error("Office API Error:", res.statusText);
+      return null;
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error("Office fetch error:", error.message);
+    return null;
+  }
+}
+
+export default async function About() {
+  // parallel fetch (faster)
+  const [aboutRes, officeRes] = await Promise.all([
+    getAboutData(),
+    getOfficeData(),
+  ]);
+
+  const aboutData = aboutRes?.data || null;
+  const officeName = officeRes?.data?.name || "";
 
   return (
     <Aboutus
       aboutData={aboutData}
       officeName={officeName}
-      showFullDescription={showFullDescription}
+      showFullDescription={true}
     />
   );
 }
