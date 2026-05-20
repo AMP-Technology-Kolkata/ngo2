@@ -1,131 +1,22 @@
-// "use client";
-// import Image from "next/image";
-// import "@splidejs/react-splide/css";
-// import { Splide, SplideSlide } from "@splidejs/react-splide";
-
-// const TeamSection = ({ data = [], active }) => {
-//   const settings = {
-//     type: "loop",
-//     rewind: true,
-//     pagination: false,
-//     arrows: true,
-//     autoplay: true,
-//     interval: 2500,
-//     gap: "1rem",
-//     perPage: 2,
-//     breakpoints: {
-//       1200: { perPage: 2 },
-//       992: { perPage: 2 },
-//       768: { perPage: 1 },
-//     },
-//   };
-
-//   return (
-//     <section
-//       style={{ background: "#c6d0d9", margin: "70px 0" }}
-//       className="py-5"
-//     >
-//       <div className="container">
-//         <div className="row justify-content-center text-center mb-2 mb-lg-4">
-//           <div className="col-12 col-lg-8 col-xxl-7 text-center mx-auto">
-//             <h2
-//               className="display-10 fw-bold text-sm"
-//               style={{ color: "#192f59" }}
-//             >
-//               Meet the Team
-//             </h2>
-//           </div>
-//         </div>
-//         <Splide options={settings}>
-//           {data.map((member, index) => (
-//             <SplideSlide key={index}>
-//               <div className="card border-0 mb-3 w-100">
-//                 <div className="row g-0 align-items-center bg-light p-3 rounded teamwrap">
-//                   <div className="col-lg-4 col-md-3 col-12">
-//                     <Image
-//                       alt={member.name}
-//                       src={`${
-//                         process.env.NEXT_PUBLIC_BACKPUBLIC
-//                       }/${member?.avatar?.slice(7)}`}
-//                       width={130}
-//                       height={150}
-//                     />
-//                   </div>
-//                   <div className="col-lg-8 col-md-9 col-12 ">
-//                     <div className="card-body">
-//                       <h5 className="fw-bold">{member.name}</h5>
-//                       <p className="mb-2">{member.category?.name}</p>
-//                       <p className="mb-2">{member.mobile}</p>
-//                       <div className="d-flex iconwrper">
-//                         <a
-//                           className="btn btn-sm me-2"
-//                           href={member.socialLinks?.facebook}
-//                         >
-//                           <svg
-//                             className="bi bi-facebook"
-//                             fill="currentColor"
-//                             height="16"
-//                             viewBox="0 0 16 16"
-//                             width="16"
-//                             xmlns="http://www.w3.org/2000/svg"
-//                           >
-//                             <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"></path>
-//                           </svg>
-//                         </a>
-
-//                         <a
-//                           className="btn btn-sm me-2"
-//                           href={member.socialLinks?.twitter}
-//                         >
-//                           <svg
-//                             className="bi bi-twitter"
-//                             fill="currentColor"
-//                             height="16"
-//                             viewBox="0 0 16 16"
-//                             width="16"
-//                             xmlns="http://www.w3.org/2000/svg"
-//                           >
-//                             <path d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334 0-.14 0-.282-.006-.422A6.685 6.685 0 0 0 16 3.542a6.658 6.658 0 0 1-1.889.518 3.301 3.301 0 0 0 1.447-1.817 6.533 6.533 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.325 9.325 0 0 1-6.767-3.429 3.289 3.289 0 0 0 1.018 4.382A3.323 3.323 0 0 1 .64 6.575v.045a3.288 3.288 0 0 0 2.632 3.218 3.203 3.203 0 0 1-.865.115 3.23 3.23 0 0 1-.614-.057 3.283 3.283 0 0 0 3.067 2.277A6.588 6.588 0 0 1 .78 13.58a6.32 6.32 0 0 1-.78-.045A9.344 9.344 0 0 0 5.026 15z"></path>
-//                           </svg>
-//                         </a>
-
-//                         <a
-//                           className="btn btn-sm"
-//                           href={member.socialLinks?.linkedin}
-//                         >
-//                           <svg
-//                             className="bi bi-linkedin"
-//                             fill="currentColor"
-//                             height="16"
-//                             viewBox="0 0 16 16"
-//                             width="16"
-//                             xmlns="http://www.w3.org/2000/svg"
-//                           >
-//                             <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z"></path>
-//                           </svg>
-//                         </a>
-//                       </div>
-//                     </div>
-//                   </div>
-//                 </div>
-//               </div>
-//             </SplideSlide>
-//           ))}
-//         </Splide>
-//       </div>
-//     </section>
-//   );
-// };
-
-// export default TeamSection;
-
 "use client";
 import Image from "next/image";
 import "@splidejs/react-splide/css";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 
-const TeamSection = ({ data = [], active }) => {
+const TeamSection = ({ data = [] }) => {
   const members = Array.isArray(data) ? data : [];
+
+  const normalizeAvatarSrc = (src) => {
+    if (typeof src !== "string") return "";
+    const cleaned = src.trim();
+    if (!cleaned || cleaned.toLowerCase() === "null" || cleaned.toLowerCase() === "undefined") {
+      return "";
+    }
+    if (/^https?:\/\//i.test(cleaned) || cleaned.startsWith("/")) {
+      return cleaned;
+    }
+    return `/${cleaned.replace(/^\/+/, "")}`;
+  };
 
   if (!members.length) {
     return null;
@@ -136,12 +27,11 @@ const TeamSection = ({ data = [], active }) => {
   const settings = {
     type: shouldLoop ? "loop" : "slide",
     rewind: shouldLoop,
-    perMove: 1,
     pagination: false,
     arrows: shouldLoop,
     autoplay: shouldLoop,
     interval: 2500,
-    gap: "1rem",
+    gap: "1.1rem",
     perPage: Math.min(3, members.length),
     breakpoints: {
       1200: { perPage: Math.min(2, members.length) },
@@ -150,89 +40,52 @@ const TeamSection = ({ data = [], active }) => {
   };
 
   return (
-    <section
-      style={{ background: "#c6d0d9", margin: "70px 0" }}
-      className="py-5"
-    >
+    <section className="team-section py-5">
       <div className="container">
-        <div className="row justify-content-center text-center mb-2 mb-lg-4">
-          <div className="col-12 col-lg-8 col-xxl-7 text-center mx-auto">
-            <h2
-              className="display-10 fw-bold text-sm"
-              style={{ color: "#192f59" }}
-            >
-              Meet the Team
-            </h2>
-          </div>
+        <div className="team-heading">
+          <span className="team-kicker">Our People</span>
+          <h2 className="team-title">Meet the Team</h2>
+          <p className="team-subtitle">A polished view of the people behind the portal, presented in a warm orange and white layout.</p>
         </div>
+
         <Splide options={settings}>
           {members.map((member, index) => (
             <SplideSlide key={index}>
-              <div className="card border-0 mb-3 w-100">
-                <div className="row g-0 align-items-center bg-light p-3 rounded teamwrap">
-                  <div className="col-lg-4 col-md-3 col-12">
+              <div className="team-card-wrap">
+                <div className="teamwrap">
+                  <div className="team-avatar">
                     <Image
                       alt={member.name}
-                      src={member?.avatar}
-                      width={130}
-                      height={150}
+                      src={normalizeAvatarSrc(member?.avatar)}
+                      width={120}
+                      height={140}
+                      className="team-photo"
                     />
                   </div>
-                  <div className="col-lg-8 col-md-9 col-12 ">
-                    <div className="card-body">
-                      <h5 className="fw-bold">{member.name}</h5>
-                      <p className="mb-2">{member.category?.name}</p>
-                      <p className="mb-2">{member.mobile}</p>
-                      <div className="d-flex iconwrper">
-                        <a
-                          className="btn btn-sm me-2"
-                          href={member.socialLinks?.facebook}
-                        >
-                          {/* Facebook Icon */}
-                          <svg
-                            className="bi bi-facebook"
-                            fill="currentColor"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            width="16"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"></path>
-                          </svg>
-                        </a>
-                        <a
-                          className="btn btn-sm me-2"
-                          href={member.socialLinks?.twitter}
-                        >
-                          {/* Twitter Icon */}
-                          <svg
-                            className="bi bi-twitter"
-                            fill="currentColor"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            width="16"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334 0-.14 0-.282-.006-.422A6.685 6.685 0 0 0 16 3.542a6.658 6.658 0 0 1-1.889.518 3.301 3.301 0 0 0 1.447-1.817 6.533 6.533 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.325 9.325 0 0 1-6.767-3.429 3.289 3.289 0 0 0 1.018 4.382A3.323 3.323 0 0 1 .64 6.575v.045a3.288 3.288 0 0 0 2.632 3.218 3.203 3.203 0 0 1-.865.115 3.23 3.23 0 0 1-.614-.057 3.283 3.283 0 0 0 3.067 2.277A6.588 6.588 0 0 1 .78 13.58a6.32 6.32 0 0 1-.78-.045A9.344 9.344 0 0 0 5.026 15z"></path>
-                          </svg>
-                        </a>
-                        <a
-                          className="btn btn-sm"
-                          href={member.socialLinks?.linkedin}
-                        >
-                          {/* LinkedIn Icon */}
-                          <svg
-                            className="bi bi-linkedin"
-                            fill="currentColor"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            width="16"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z"></path>
-                          </svg>
-                        </a>
-                      </div>
+
+                  <div className="team-body">
+                    <h5 className="team-name">{member.name}</h5>
+                    <p className="team-role">{member.category?.name}</p>
+                    <p className="team-mobile">{member.mobile}</p>
+
+                    <div className="d-flex iconwrper">
+                      <a className="btn btn-sm me-2" href={member.socialLinks?.facebook}>
+                        <svg className="bi bi-facebook" fill="currentColor" height="16" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"></path>
+                        </svg>
+                      </a>
+
+                      <a className="btn btn-sm me-2" href={member.socialLinks?.twitter}>
+                        <svg className="bi bi-twitter" fill="currentColor" height="16" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334 0-.14 0-.282-.006-.422A6.685 6.685 0 0 0 16 3.542a6.658 6.658 0 0 1-1.889.518 3.301 3.301 0 0 0 1.447-1.817 6.533 6.533 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.325 9.325 0 0 1-6.767-3.429 3.289 3.289 0 0 0 1.018 4.382A3.323 3.323 0 0 1 .64 6.575v.045a3.288 3.288 0 0 0 2.632 3.218 3.203 3.203 0 0 1-.865.115 3.23 3.23 0 0 1-.614-.057 3.283 3.283 0 0 0 3.067 2.277A6.588 6.588 0 0 1 .78 13.58a6.32 6.32 0 0 1-.78-.045A9.344 9.344 0 0 0 5.026 15z"></path>
+                        </svg>
+                      </a>
+
+                      <a className="btn btn-sm" href={member.socialLinks?.linkedin}>
+                        <svg className="bi bi-linkedin" fill="currentColor" height="16" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z"></path>
+                        </svg>
+                      </a>
                     </div>
                   </div>
                 </div>

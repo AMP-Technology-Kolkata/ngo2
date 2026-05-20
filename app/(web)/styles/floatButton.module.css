@@ -18,20 +18,38 @@
 }
 .floatArrow {
   position: fixed;
-  width: 50px;
-  height: 50px;
-  bottom: 120px;
+  width: 56px;
+  height: 56px;
+  bottom: 116px;
   right: 40px;
-  background-color: #3693be;
-  color: #fff;
-  border-radius: 50px;
-  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(181, 96, 14, 0.2);
+  background: linear-gradient(135deg, #fff7e8 0%, #ffdb9f 50%, #f6a52e 100%);
+  color: #8a4c00;
+  border-radius: 50%;
   font-size: 30px;
-  box-shadow: 2px 2px 3px #999;
   z-index: 1000;
+  box-shadow: 0 12px 26px rgba(137, 79, 5, 0.24);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  padding: 0;
 }
 .myFloatArrow {
-  margin-top: 2px;
+  margin-top: 0;
+  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.35));
+}
+
+.floatArrow:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 32px rgba(137, 79, 5, 0.28);
+  filter: saturate(1.05);
+}
+
+.floatArrow:focus-visible {
+  outline: 3px solid rgba(246, 165, 46, 0.45);
+  outline-offset: 3px;
 }
 /* 
 @media (max-width: 992px) {

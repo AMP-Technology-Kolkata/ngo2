@@ -7,7 +7,6 @@ import axios from "axios";
 
 export default function Page() {
   const [state, formAction] = useFormState(handleSubmit, null);
-  const [file, setFile] = useState(null);
   const [location, setLocation] = useState("");
 
   if (state?.success) {
@@ -71,7 +70,7 @@ export default function Page() {
   };
 
   return (
-    <section id="contact" className="contact py-5" style={{ backgroundColor: "aliceblue" }}>
+    <section id="contact" className="contact grievance-page py-5">
       <div className="container">
         <div className="section-title">
           <h2>Grievance</h2>

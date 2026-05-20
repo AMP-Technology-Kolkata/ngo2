@@ -34,9 +34,15 @@ const Arrowup = () => {
   return (
     <div>
       {isVisible && (
-        <a href="#" className={styles.floatArrow} onClick={handleScrollToTop}>
+        <button
+          type="button"
+          className={styles.floatArrow}
+          onClick={handleScrollToTop}
+          aria-label="Scroll to top"
+          title="Scroll to top"
+        >
           <FaAngleUp className={styles.myFloatArrow} />
-        </a>
+        </button>
       )}
     </div>
   );

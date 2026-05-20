@@ -34,38 +34,49 @@ export default async function ChairmanDesk({ showFullDescription = true }) {
   const title = titeldata?.data?.people || " Desk";
 
   return (
-    <div className="backimge">
+    <section className="backimge chairman-section">
       <div className={styles.deskwrpper}>
+        <div className={styles.sectionHeader}>
+          <span className={styles.sectionKicker}>Leadership</span>
+          <h2 className={styles.sectionTitle}>{title}</h2>
+          <p className={styles.sectionSubtitle}>A brief message from the leadership team presented in a clean, public-facing format.</p>
+        </div>
+
+        {!data?.length && <div className={styles.emptyState}>Chairman desk information is not available right now.</div>}
+
         {data?.map((person, index) => (
           <div key={index} className={styles.chairmanDesk}>
-            <div className={styles.textSection}>
-              <h2 className="display-10 fw-bold" style={{ color: "#192f59" }}>
-                {title}
-              </h2>
-              <h4 style={{ color: "#192f59" }}>{person.name}</h4>
-
+            <div className={styles.personMeta}>
+              <span className={styles.nameTag}>Chairman Desk</span>
+              <h3 className={styles.personName}>{person.name}</h3>
               <p className={styles.deskDetails}>
                 {showFullDescription
                   ? person.about
-                  : `${person.about.slice(0, 500)}...`}
+                  : `${person.about?.slice(0, 500) || ""}...`}
                 {!showFullDescription && (
-                  <a href="/Desk" style={{ color: "blue", marginLeft: "5px" }}>
+                  <a href="/Desk" className={styles.readMoreLink}>
                     Read More
                   </a>
                 )}
               </p>
+              <div className={styles.featureRow}>
+                <span className={styles.featureChip}>Public Leadership</span>
+                <span className={styles.featureChip}>Citizen Message</span>
+                <span className={styles.featureChip}>Official Desk</span>
+              </div>
             </div>
             <div className={styles.imageSection}>
               <Image
                 src={`${process.env.BACKPUBLIC}/${person.image?.slice(7)}`}
                 alt={person.name}
-                width={200}
-                height={250}
+                width={260}
+                height={320}
+                className={styles.portrait}
               />
             </div>
           </div>
         ))}
       </div>
-    </div>
+    </section>
   );
 }

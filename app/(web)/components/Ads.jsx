@@ -25,7 +25,12 @@ const StaticImageSlider = ({ data = [] }) => {
   }
 
   return (
-    <div className="ads-slider-container">
+    <section className="ads-slider-container">
+      <div className="ads-header">
+        <span className="ads-kicker">Announcements</span>
+        <h2 className="ads-title">Featured Ads</h2>
+        <p className="ads-subtitle">Highlighted notices and promotional banners presented in a clean, professional carousel.</p>
+      </div>
       <Splide
         options={{
           type: "loop",
@@ -36,10 +41,10 @@ const StaticImageSlider = ({ data = [] }) => {
           autoplay: true,
           interval: 3000,
           perPage: 3,
-          gap: "1em",
+          gap: "1.25rem",
           breakpoints: {
-            1200: { perPage: 2, gap: "15px" },
-            992: { perPage: 1, gap: "15px" },
+            1200: { perPage: 2, gap: "1rem" },
+            992: { perPage: 1, gap: "1rem" },
           },
         }}
       >
@@ -53,6 +58,7 @@ const StaticImageSlider = ({ data = [] }) => {
                     src={normalizeImageSrc(image?.image)}
                     alt={`Image ${index + 1}`}
                     fill
+                    sizes="(max-width: 992px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   />
                 </div>
               </div>
@@ -60,7 +66,7 @@ const StaticImageSlider = ({ data = [] }) => {
           </SplideSlide>
         ))}
       </Splide>
-    </div>
+    </section>
   );
 };
 

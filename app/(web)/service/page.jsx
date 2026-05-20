@@ -44,16 +44,13 @@ export default async function ServiceGrid() {
 
   return (
     <>
-      <section id="services" className="services py-5 ">
+      <section id="services" className="services py-5">
         <div className="container">
-          <h2
-            className="display-10 fw-bold text-center"
-            style={{
-              color: "#192f59",
-            }}
-          >
-            Services
-          </h2>
+          <div className="service-heading">
+            <span className="service-kicker">What We Offer</span>
+            <h2 className="service-title">Services</h2>
+            <p className="service-subtitle">A concise view of the services available through the portal, presented in a clean and professional layout.</p>
+          </div>
 
           <div className="row">
             {data?.map((item, index) => {
@@ -72,7 +69,7 @@ export default async function ServiceGrid() {
                       <FaDribbble />
                     </div>
 
-                    <a href={item.url && item.url} className="text-dark text-decoration-none">
+                    <a href={item.url && item.url} className="service-link text-decoration-none">
                       <h4>{item.name}</h4>
                       <p>{item.description}</p>
                     </a>

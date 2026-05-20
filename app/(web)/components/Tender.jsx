@@ -2,33 +2,7 @@ import React from "react";
 
 const Tendersec = ({ notification = [] }) => {
   return (
-    <div
-      style={{
-        background: "#6183c3",
-        color: "#fff",
-        display: "flex",
-        alignItems: "center",
-        overflow: "hidden",
-        height: "40px",
-        fontSize: "14px",
-      }}
-    >
-      <div
-        style={{
-          background: "#000",
-          color: "#fff",
-          padding: "0px 20px",
-          fontWeight: "bold",
-          height: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexShrink: 0,
-        }}
-      >
-        Latest News
-      </div>
-
+    <div className="tender-strip">
       <marquee width="100%" direction="left" behavior="scroll" scrollamount="3">
         <div
           className="marquee"
@@ -38,22 +12,22 @@ const Tendersec = ({ notification = [] }) => {
             display: "flex",
             alignItems: "center",
             flex: 1,
-            width: "80%",
+            width: "100%",
           }}
         >
           {notification.map((item, index) => (
             <div
               key={index}
               style={{
-                // marginTop: "12px",
                 marginRight: "50px",
-                color: "#fff",
+                color: "#4a3214",
+                fontWeight: 600,
               }}
             >
               <p style={{ margin: "0px", textAlign: "center" }}>
                 <span
                   style={{
-                    color: "red",
+                    color: "#d97706",
                     fontSize: "25px",
                     animation: "blink 1s infinite",
                   }}
