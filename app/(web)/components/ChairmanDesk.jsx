@@ -7,7 +7,9 @@ async function getData() {
       "x-api-key": process.env.API_KEY,
       "office-id": process.env.OFFICE,
     },
-    cache: "no-store",
+    next: {
+        revalidate: 1000,
+      },
   });
   if (!res.ok) {
     return res.statusText;
@@ -20,7 +22,9 @@ async function getTitleData() {
       "x-api-key": process.env.API_KEY,
       "office-id": process.env.OFFICE,
     },
-    cache: "no-store",
+    next: {
+        revalidate: 1000,
+      },
   });
   if (!res.ok) {
     return res.statusText;

@@ -7,7 +7,9 @@ const getProjectData = async () => {
         "x-api-key": process.env.API_KEY,
         "office-id": process.env.OFFICE,
       },
-      cache: "no-store",
+      next: {
+        revalidate: 1000,
+      },
     });
     const data = await res.json();
     return data;

@@ -7,7 +7,9 @@ async function getData() {
         "x-api-key": process.env.API_KEY,
         "office-id": process.env.OFFICE,
       },
-      cache: "no-store",
+      next: {
+        revalidate: 1000,
+      },
     });
     officeData = await officeData.json();
     const isActive = officeData.data?.enabled_services?.includes("staff");
@@ -19,7 +21,9 @@ async function getData() {
         "x-api-key": process.env.API_KEY,
         "office-id": process.env.OFFICE,
       },
-      cache: "no-store",
+      next: {
+        revalidate: 1000,
+      },
     });
 
     if (!res.ok) {

@@ -8,7 +8,9 @@ async function getData() {
         "x-api-key": process.env.API_KEY,
         "office-id": process.env.OFFICE,
       },
-      cache: "no-store",
+      next: {
+        revalidate: 1000,
+      },
     });
     if (!officeData.ok) {
       return console.error(`Failed to fetch office data: ${res.statusText}`);
