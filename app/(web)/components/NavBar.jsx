@@ -121,9 +121,9 @@ export default function NavBar() {
           {/* <a className="getstarted" href="/login">
             Admin Login
           </a> */}
-          <a className="getstarted" href="http://wbpms.in/citizen" target="_blank" rel="noopener noreferrer">
+          <NavLink className="getstarted" href="/citizen-services" onClick={handleNavClick} activeClassName="button-link-current">
             Citizen Services
-          </a>
+          </NavLink>
         </div>
       </div>
     </nav>

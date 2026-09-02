@@ -22,12 +22,25 @@ import {
   FaPhotoVideo,
   FaBookmark,
   FaPoll,
+  FaEdit,
+  FaCheckCircle,
+  FaTimesCircle,
+  FaListAlt,
+  FaTable,
+  FaListUl,
+  FaSignature,
+  FaDownload,
+  FaFileAlt,
+  FaDatabase,
+  FaChevronDown,
+  FaUsers,
 } from "react-icons/fa";
 import NavItem from "./dashboard/components/NavItems";
 
 function Sidebar() {
   const [menu, setMenu] = useState([]);
   const [officeName, setofficeName] = useState("");
+  const [reportsOpen, setReportsOpen] = useState(false);
 
   useEffect(() => {
     fetchMenu();
@@ -47,6 +60,28 @@ function Sidebar() {
       console.error("Error fetching menus:", error);
     }
   };
+
+  const citizenLinks = [
+    { href: "/dashboard/citizen/new-application", icon: FaEdit, text: "New Application" },
+    { href: "/dashboard/citizen/completed-application", icon: FaCheckCircle, text: "Completed Application" },
+    { href: "/dashboard/citizen/rejected-application", icon: FaTimesCircle, text: "Rejected Application" },
+    { href: "/dashboard/citizen/all-application", icon: FaListAlt, text: "All Application" },
+    { href: "/dashboard/citizen/manage-data", icon: FaTable, text: "Manage Data" },
+    { href: "/dashboard/citizen/manage-guidelines", icon: FaListUl, text: "Manage Guidelines" },
+    { href: "/dashboard/citizen/manage-signatures", icon: FaSignature, text: "Manage Signatures" },
+    { href: "/dashboard/citizen/downloads", icon: FaDownload, text: "Downloads Menu" },
+  ];
+
+  const reportLinks = [
+    { href: "/dashboard/citizen/reports/daily", text: "Daily Report" },
+    { href: "/dashboard/citizen/reports/monthly", text: "Monthly Report" },
+    { href: "/dashboard/citizen/reports/yearly", text: "Yearly Report" },
+  ];
+
+  const citizenBottomLinks = [
+    { href: "/dashboard/citizen/certificate-issued", icon: FaFileAlt, text: "Certificate Issued" },
+    { href: "/dashboard/citizen/old-database", icon: FaDatabase, text: "Old Database" },
+  ];
 
   return (
     <aside className="main-sidebar sidebar-dark-primary elevation-5">
@@ -209,6 +244,64 @@ function Sidebar() {
               icon={FaBookmark}
               text="Useful Links"
             />
+
+            {/* ===== CITIZEN SECTION (ribbon) ===== */}
+            <li className="nav-header citizen-ribbon">
+              <FaUsers className="citizen-ribbon-icon" />
+              <span>CITIZEN</span>
+            </li>
+
+            {citizenLinks.map((item) => (
+              <NavItem
+                key={item.href}
+                href={item.href}
+                icon={item.icon}
+                text={item.text}
+              />
+            ))}
+
+            {/* Reports — collapsible */}
+            <li className={`nav-item has-treeview ${reportsOpen ? "menu-open" : ""}`}>
+              <a
+                href="#"
+                className="nav-link"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setReportsOpen((prev) => !prev);
+                }}
+              >
+                <FaFileAlt className="nav-icon" />
+                <p>
+                  Reports
+                  <FaChevronDown
+                    className={`report-caret ${reportsOpen ? "rotated" : ""}`}
+                  />
+                </p>
+              </a>
+              <ul
+                className="nav nav-treeview"
+                style={{ display: reportsOpen ? "block" : "none" }}
+              >
+                {reportLinks.map((r) => (
+                  <li className="nav-item" key={r.href}>
+                    <Link href={r.href} className="nav-link">
+                      <FaCircle className="nav-icon" style={{ fontSize: "6px" }} />
+                      <p>{r.text}</p>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </li>
+
+            {citizenBottomLinks.map((item) => (
+              <NavItem
+                key={item.href}
+                href={item.href}
+                icon={item.icon}
+                text={item.text}
+              />
+            ))}
+
             <li className="nav-item d-none">
               <Link href="/dashboard/usermasterpage" className="nav-link">
                 <FaCircle className="nav-icon" />
@@ -231,6 +324,47 @@ function Sidebar() {
           </ul>
         </nav>
       </div>
+
+      <style jsx>{`
+        .citizen-ribbon {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin: 18px 10px 10px 10px;
+          padding: 8px 14px;
+          background: linear-gradient(90deg, #007bff 0%, #0056d2 100%);
+          border-radius: 6px;
+          color: #fff !important;
+          font-weight: 700;
+          font-size: 0.78rem;
+          letter-spacing: 1px;
+          box-shadow: 0 2px 6px rgba(0, 91, 210, 0.35);
+          position: relative;
+        }
+        .citizen-ribbon::after {
+          content: "";
+          position: absolute;
+          left: 14px;
+          bottom: -6px;
+          width: 0;
+          height: 0;
+          border-left: 6px solid transparent;
+          border-right: 6px solid transparent;
+          border-top: 6px solid #003f96;
+        }
+        .citizen-ribbon-icon {
+          font-size: 0.85rem;
+        }
+        .report-caret {
+          float: right;
+          margin-top: 4px;
+          font-size: 0.65rem;
+          transition: transform 0.2s ease;
+        }
+        .report-caret.rotated {
+          transform: rotate(180deg);
+        }
+      `}</style>
     </aside>
   );
 }

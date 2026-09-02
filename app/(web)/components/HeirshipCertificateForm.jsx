@@ -1,9 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import swal from "sweetalert";
 import { useRouter } from "next/navigation";
 import styles from "../styles/HeirshipCertificateForm.module.css";
+import { getFormMasterData } from "../../../lib/publicData.actions";
 
 const generateCaptcha = () => {
   const characters =
@@ -14,16 +15,6 @@ const generateCaptcha = () => {
   }
   return captcha;
 };
-
-// TODO: replace these with API-driven options (public API, About-page fetch pattern)
-// once village/post_office/police_station/sansad/id_type endpoints are ready
-const VILLAGES = [{ _id: "6a9524dcb86381b09b318e7c", name: "Kamarpur" }];
-const POST_OFFICES = [
-  { _id: "6a952832b86381b09b318e83", name: "700056 - Goria" },
-];
-const POLICE_STATIONS = [{ _id: "6a9529a3b86381b09b318e87", name: "Tomluk" }];
-const SANSADS = [{ _id: "6a9529edb86381b09b318e8b", name: "9 - Bolorampur" }];
-const ID_TYPES = [{ _id: "6a952a54b86381b09b318e92", name: "Voter ID" }];
 
 const initialFormData = {
   title: "Shri.",
@@ -68,6 +59,29 @@ export default function HeirshipCertificateForm({ submitHeirship }) {
   const [captchaInput, setCaptchaInput] = useState("");
   const [agree, setAgree] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  const [masterData, setMasterData] = useState({
+    village: [],
+    post_office: [],
+    police_station: [],
+    sansad: [],
+    id_type: [],
+  });
+  const [masterDataLoading, setMasterDataLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      const data = await getFormMasterData();
+      if (active) {
+        setMasterData(data);
+        setMasterDataLoading(false);
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const refreshCaptcha = () => {
     setCaptcha(generateCaptcha());
@@ -116,64 +130,84 @@ export default function HeirshipCertificateForm({ submitHeirship }) {
   };
 
   const validateForm = () => {
-  const required = [
-    "title", "name", "mobile", "gender", "dob", "guardian_name",
-    "guardian_type", "address", "village", "post_office",
-    "police_station", "gp", "sansad", "district", "state",
-    "religion", "id_type",
-  ];
-  for (const field of required) {
-    if (!formData[field] || formData[field].toString().trim() === "") {
-      swal("Error!", `Please fill the "${field.replace(/_/g, " ")}" field`, "error");
+    const required = [
+      "title",
+      "name",
+      "mobile",
+      "gender",
+      "dob",
+      "guardian_name",
+      "guardian_type",
+      "address",
+      "village",
+      "post_office",
+      "police_station",
+      "gp",
+      "sansad",
+      "district",
+      "state",
+      "religion",
+      "id_type",
+    ];
+    for (const field of required) {
+      if (!formData[field] || formData[field].toString().trim() === "") {
+        swal(
+          "Error!",
+          `Please fill the "${field.replace(/_/g, " ")}" field`,
+          "error",
+        );
+        return false;
+      }
+    }
+
+    const dobDate = new Date(formData.dob);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (dobDate > today) {
+      swal("Error!", "Date of Birth cannot be a future date", "error");
       return false;
     }
-  }
 
-  // 👇 New: DOB sanity check
-  const dobDate = new Date(formData.dob);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  if (dobDate > today) {
-    swal("Error!", "Date of Birth cannot be a future date", "error");
-    return false;
-  }
-
-  // Optional: minimum age check (e.g. 18+) if backend expects adult applicant
-  const age = today.getFullYear() - dobDate.getFullYear();
-  const hasHadBirthdayThisYear =
-    today.getMonth() > dobDate.getMonth() ||
-    (today.getMonth() === dobDate.getMonth() && today.getDate() >= dobDate.getDate());
-  const actualAge = hasHadBirthdayThisYear ? age : age - 1;
-  if (actualAge < 18) {
-    swal("Error!", "Applicant must be at least 18 years old", "error");
-    return false;
-  }
-
-  if (!mobileVerified) {
-    swal("Error!", "Please verify your mobile number", "error");
-    return false;
-  }
-  for (const s of successors) {
-    if (!s.name || !s.guardian || !s.relationship || !s.age || !s.address) {
-      swal("Error!", "Please fill all successor details", "error");
+    const age = today.getFullYear() - dobDate.getFullYear();
+    const hasHadBirthdayThisYear =
+      today.getMonth() > dobDate.getMonth() ||
+      (today.getMonth() === dobDate.getMonth() &&
+        today.getDate() >= dobDate.getDate());
+    const actualAge = hasHadBirthdayThisYear ? age : age - 1;
+    if (actualAge < 18) {
+      swal("Error!", "Applicant must be at least 18 years old", "error");
       return false;
     }
-  }
-  if (!files.document || !files.tax_receipt || !files.member_authorization) {
-    swal("Error!", "Please upload all required documents", "error");
-    return false;
-  }
-  if (!agree) {
-    swal("Error!", "Please confirm the details are correct and valid", "error");
-    return false;
-  }
-  if (captchaInput.toUpperCase() !== captcha.toUpperCase()) {
-    swal("Error!", "Invalid Captcha. Please try again.", "error");
-    refreshCaptcha();
-    return false;
-  }
-  return true;
-};
+
+    if (!mobileVerified) {
+      swal("Error!", "Please verify your mobile number", "error");
+      return false;
+    }
+    for (const s of successors) {
+      if (!s.name || !s.guardian || !s.relationship || !s.age || !s.address) {
+        swal("Error!", "Please fill all successor details", "error");
+        return false;
+      }
+    }
+    if (!files.document || !files.tax_receipt || !files.member_authorization) {
+      swal("Error!", "Please upload all required documents", "error");
+      return false;
+    }
+    if (!agree) {
+      swal(
+        "Error!",
+        "Please confirm the details are correct and valid",
+        "error",
+      );
+      return false;
+    }
+    if (captchaInput.toUpperCase() !== captcha.toUpperCase()) {
+      swal("Error!", "Invalid Captcha. Please try again.", "error");
+      refreshCaptcha();
+      return false;
+    }
+    return true;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -254,11 +288,7 @@ export default function HeirshipCertificateForm({ submitHeirship }) {
           <div className={styles.grid4}>
             <div className={styles.field}>
               <label>Title *</label>
-              <select
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-              >
+              <select name="title" value={formData.title} onChange={handleChange}>
                 <option value="Shri.">Shri.</option>
                 <option value="Shrimati">Shrimati</option>
                 <option value="Kumari">Kumari</option>
@@ -281,16 +311,12 @@ export default function HeirshipCertificateForm({ submitHeirship }) {
                 name="dob"
                 value={formData.dob}
                 onChange={handleChange}
-                max={new Date().toISOString().split("T")[0]} 
+                max={new Date().toISOString().split("T")[0]}
               />
             </div>
             <div className={styles.field}>
               <label>Gender *</label>
-              <select
-                name="gender"
-                value={formData.gender}
-                onChange={handleChange}
-              >
+              <select name="gender" value={formData.gender} onChange={handleChange}>
                 <option value="">Choose Gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
@@ -355,11 +381,7 @@ export default function HeirshipCertificateForm({ submitHeirship }) {
           <div className={styles.grid1}>
             <div className={styles.field}>
               <label>Religion *</label>
-              <select
-                name="religion"
-                value={formData.religion}
-                onChange={handleChange}
-              >
+              <select name="religion" value={formData.religion} onChange={handleChange}>
                 <option value="">Choose Religion</option>
                 <option value="hindu">Hindu</option>
                 <option value="muslim">Muslim</option>
@@ -391,9 +413,12 @@ export default function HeirshipCertificateForm({ submitHeirship }) {
                 name="village"
                 value={formData.village}
                 onChange={handleChange}
+                disabled={masterDataLoading}
               >
-                <option value="">Choose Village</option>
-                {VILLAGES.map((v) => (
+                <option value="">
+                  {masterDataLoading ? "Loading..." : "Choose Village"}
+                </option>
+                {masterData.village.map((v) => (
                   <option key={v._id} value={v._id}>
                     {v.name}
                   </option>
@@ -409,9 +434,12 @@ export default function HeirshipCertificateForm({ submitHeirship }) {
                 name="post_office"
                 value={formData.post_office}
                 onChange={handleChange}
+                disabled={masterDataLoading}
               >
-                <option value="">Choose Post Office</option>
-                {POST_OFFICES.map((p) => (
+                <option value="">
+                  {masterDataLoading ? "Loading..." : "Choose Post Office"}
+                </option>
+                {masterData.post_office.map((p) => (
                   <option key={p._id} value={p._id}>
                     {p.name}
                   </option>
@@ -424,9 +452,12 @@ export default function HeirshipCertificateForm({ submitHeirship }) {
                 name="police_station"
                 value={formData.police_station}
                 onChange={handleChange}
+                disabled={masterDataLoading}
               >
-                <option value="">Choose Police Station</option>
-                {POLICE_STATIONS.map((p) => (
+                <option value="">
+                  {masterDataLoading ? "Loading..." : "Choose Police Station"}
+                </option>
+                {masterData.police_station.map((p) => (
                   <option key={p._id} value={p._id}>
                     {p.name}
                   </option>
@@ -435,12 +466,7 @@ export default function HeirshipCertificateForm({ submitHeirship }) {
             </div>
             <div className={styles.field}>
               <label>Gram Panchayet *</label>
-              <input
-                type="text"
-                name="gp"
-                value={formData.gp}
-                onChange={handleChange}
-              />
+              <input type="text" name="gp" value={formData.gp} onChange={handleChange} />
             </div>
             <div className={styles.field}>
               <label>Sansad *</label>
@@ -448,9 +474,12 @@ export default function HeirshipCertificateForm({ submitHeirship }) {
                 name="sansad"
                 value={formData.sansad}
                 onChange={handleChange}
+                disabled={masterDataLoading}
               >
-                <option value="">Choose Sansad</option>
-                {SANSADS.map((s) => (
+                <option value="">
+                  {masterDataLoading ? "Loading..." : "Choose Sansad"}
+                </option>
+                {masterData.sansad.map((s) => (
                   <option key={s._id} value={s._id}>
                     {s.name}
                   </option>
@@ -486,9 +515,12 @@ export default function HeirshipCertificateForm({ submitHeirship }) {
                 name="id_type"
                 value={formData.id_type}
                 onChange={handleChange}
+                disabled={masterDataLoading}
               >
-                <option value="">Choose Document</option>
-                {ID_TYPES.map((t) => (
+                <option value="">
+                  {masterDataLoading ? "Loading..." : "Choose Document"}
+                </option>
+                {masterData.id_type.map((t) => (
                   <option key={t._id} value={t._id}>
                     {t.name}
                   </option>
@@ -504,11 +536,7 @@ export default function HeirshipCertificateForm({ submitHeirship }) {
           <div className={styles.grid2}>
             <div className={styles.field}>
               <label>Current Tax Receipt (upto 300KB) *</label>
-              <input
-                type="file"
-                name="tax_receipt"
-                onChange={handleFileChange}
-              />
+              <input type="file" name="tax_receipt" onChange={handleFileChange} />
             </div>
             <div className={styles.field}>
               <label>Member Authorization *</label>
@@ -530,9 +558,7 @@ export default function HeirshipCertificateForm({ submitHeirship }) {
                 type="text"
                 placeholder="Name"
                 value={s.name}
-                onChange={(e) =>
-                  handleSuccessorChange(index, "name", e.target.value)
-                }
+                onChange={(e) => handleSuccessorChange(index, "name", e.target.value)}
               />
               <input
                 type="text"
@@ -554,9 +580,7 @@ export default function HeirshipCertificateForm({ submitHeirship }) {
                 type="number"
                 placeholder="Age"
                 value={s.age}
-                onChange={(e) =>
-                  handleSuccessorChange(index, "age", e.target.value)
-                }
+                onChange={(e) => handleSuccessorChange(index, "age", e.target.value)}
               />
               <input
                 type="text"
@@ -575,11 +599,7 @@ export default function HeirshipCertificateForm({ submitHeirship }) {
               </button>
             </div>
           ))}
-          <button
-            type="button"
-            className={styles.addBtn}
-            onClick={addSuccessor}
-          >
+          <button type="button" className={styles.addBtn} onClick={addSuccessor}>
             + Add New
           </button>
 
@@ -588,11 +608,7 @@ export default function HeirshipCertificateForm({ submitHeirship }) {
           {/* Captcha */}
           <div className={styles.captchaSection}>
             <div className={styles.captchaPreview}>{captcha}</div>
-            <button
-              type="button"
-              className={styles.refreshBtn}
-              onClick={refreshCaptcha}
-            >
+            <button type="button" className={styles.refreshBtn} onClick={refreshCaptcha}>
               ↻
             </button>
             <input
@@ -613,19 +629,18 @@ export default function HeirshipCertificateForm({ submitHeirship }) {
           </label>
 
           <div className={styles.actions}>
-            <button
-              type="submit"
-              className={styles.submitBtn}
-              disabled={submitting}
-            >
+            <button type="submit" className={styles.submitBtn} disabled={submitting}>
               {submitting ? "Submitting..." : "Submit"}
+            </button>
+            <button type="button" className={styles.resetBtn} onClick={handleReset}>
+              Reset
             </button>
             <button
               type="button"
               className={styles.resetBtn}
-              onClick={handleReset}
+              onClick={() => router.push("/citizen-services")}
             >
-              Reset
+              ← Back
             </button>
           </div>
         </form>
