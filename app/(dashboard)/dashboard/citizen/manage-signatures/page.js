@@ -203,7 +203,7 @@ function Page() {
                   <td>
                     {row.image ? (
                       <img
-                        src={buildSignatureUrl(row.image)}
+                        src={row.image}
                         alt={`${row.person} signature`}
                         style={{ height: 40, objectFit: "contain" }}
                       />

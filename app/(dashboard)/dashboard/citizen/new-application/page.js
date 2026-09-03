@@ -6,7 +6,7 @@ import Button from "react-bootstrap/Button";
 import "bootstrap/dist/css/bootstrap.min.css";
 import swal from "sweetalert";
 import { useRouter } from "next/navigation";
-import { FaEye, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { FaEye, FaCheckCircle, FaTimesCircle, FaStamp } from "react-icons/fa";
 import { getFormMasterData } from "../../../../../lib/publicData.actions";
 
 const BACKLINK = process.env.NEXT_PUBLIC_BACKLINK; // e.g. http://localhost:8001/api
@@ -25,6 +25,9 @@ const formatDate = (dateStr) => {
     minute: "2-digit",
   });
 };
+
+// today's date in yyyy-mm-dd for default value of <input type="date" />
+const todayStr = () => new Date().toISOString().split("T")[0];
 
 function Page() {
   const router = useRouter();
@@ -58,6 +61,12 @@ function Page() {
   const [selectedApp, setSelectedApp] = useState(null);
   const [remarks, setRemarks] = useState("");
   const [rejecting, setRejecting] = useState(false);
+
+  // Complete modal
+  const [showCompleteModal, setShowCompleteModal] = useState(false);
+  const [completingApp, setCompletingApp] = useState(null);
+  const [issueDate, setIssueDate] = useState("");
+  const [completing, setCompleting] = useState(false);
 
   useEffect(() => {
     fetchLookupData();
@@ -130,6 +139,51 @@ function Page() {
   // ---------- Approve (no dedicated API given — routes to processing/certificate page) ----------
   const handleApprove = (app) => {
     router.push(`/dashboard/citizen/certificate/${app.application_no}`);
+  };
+
+  // ---------- Complete ----------
+  const handleOpenComplete = (app) => {
+    setCompletingApp(app);
+    setIssueDate(todayStr());
+    setShowCompleteModal(true);
+  };
+
+  const handleCancelComplete = () => {
+    setShowCompleteModal(false);
+    setCompletingApp(null);
+    setIssueDate("");
+  };
+
+  const handleSaveComplete = async () => {
+    if (!issueDate) {
+      swal("Error!", "Please select an issue date", "error");
+      return;
+    }
+    setCompleting(true);
+    try {
+      await axios.post(
+        `${API_BASE}/application/complete`,
+        {
+          application_no: completingApp.application_no,
+          issue_date: issueDate,
+        },
+        { withCredentials: true },
+      );
+      setShowCompleteModal(false);
+      setCompletingApp(null);
+      setIssueDate("");
+      swal("Completed!", "Application has been marked as completed.", "success");
+      fetchApplications();
+    } catch (err) {
+      console.error("Error completing application:", err);
+      swal(
+        "Error!",
+        err.response?.data?.message || "Failed to complete application",
+        "error",
+      );
+    } finally {
+      setCompleting(false);
+    }
   };
 
   // ---------- Reject ----------
@@ -359,6 +413,11 @@ function Page() {
                         style={{ color: "#28a745", cursor: "pointer" }}
                         onClick={() => handleApprove(app)}
                       />
+                      <FaStamp
+                        title="Complete"
+                        style={{ color: "#17a2b8", cursor: "pointer" }}
+                        onClick={() => handleOpenComplete(app)}
+                      />
                       <FaTimesCircle
                         title="Reject"
                         style={{ color: "#dc3545", cursor: "pointer" }}
@@ -481,6 +540,43 @@ function Page() {
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowViewModal(false)}>
             Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* ===== Complete Modal ===== */}
+      <Modal show={showCompleteModal} onHide={handleCancelComplete} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Complete Application</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="form-group">
+            <label className="font-weight-bold">Application No</label>
+            <input
+              type="text"
+              className="form-control"
+              value={completingApp?.application_no || ""}
+              disabled
+              readOnly
+            />
+          </div>
+          <div className="form-group">
+            <label className="font-weight-bold">Issue Date</label>
+            <input
+              type="date"
+              className="form-control"
+              value={issueDate}
+              onChange={(e) => setIssueDate(e.target.value)}
+            />
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="info"
+            onClick={handleSaveComplete}
+            disabled={completing}
+          >
+            {completing ? "Saving..." : "Mark Completed"}
           </Button>
         </Modal.Footer>
       </Modal>

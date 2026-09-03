@@ -5,7 +5,7 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import "bootstrap/dist/css/bootstrap.min.css";
 import swal from "sweetalert";
-import { FaEye, FaDownload, FaFileAlt } from "react-icons/fa";
+import { FaEye } from "react-icons/fa";
 import { getFormMasterData } from "../../../../../lib/publicData.actions";
 
 const BACKLINK = process.env.NEXT_PUBLIC_BACKLINK;
@@ -59,14 +59,14 @@ function Page() {
     setLoading(true);
     try {
       const res = await axios.get(`${API_BASE}/applicationnew`, {
-        params: { status: "completed" },
+        params: { status: "rejected" },
         withCredentials: true,
       });
       setApplications(res.data.data || []);
       setError("");
     } catch (err) {
-      console.error("Error fetching completed applications:", err);
-      setError("Error fetching completed applications");
+      console.error("Error fetching rejected applications:", err);
+      setError("Error fetching rejected applications");
     } finally {
       setLoading(false);
     }
@@ -96,47 +96,23 @@ function Page() {
     }
   };
 
-  // TODO: confirm actual field name / endpoint that holds the certificate PDF url
-  const handleDownload = (app) => {
-    if (!app.certificate_file) {
-      swal(
-        "Not available",
-        "Certificate file URL not found for this record",
-        "warning",
-      );
-      return;
-    }
-    window.open(app.certificate_file, "_blank");
-  };
-
-  const handlePrint = (app) => {
-    if (!app.certificate_file) {
-      swal(
-        "Not available",
-        "Certificate file URL not found for this record",
-        "warning",
-      );
-      return;
-    }
-    const win = window.open(app.certificate_file, "_blank");
-    win?.addEventListener("load", () => win.print());
-  };
-
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) return applications;
     return applications.filter((app) =>
       [
-        app.certificate_no,
         app.application_no,
         app.name,
+        app.mobile,
         app.application_type,
-        app.issued_by,
+        getLabel("sansad", app.sansad),
+        app.remarks,
       ]
         .filter(Boolean)
         .some((val) => val.toString().toLowerCase().includes(q)),
     );
-  }, [applications, search]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [applications, search, lookup]);
 
   const totalEntries = filtered.length;
   const totalPages = Math.max(1, Math.ceil(totalEntries / entriesPerPage));
@@ -149,9 +125,7 @@ function Page() {
 
   return (
     <div className="container-fluid mt-4">
-      <h2 style={{ color: "#007bff", marginBottom: "1.5rem" }}>
-        Manage Certificates
-      </h2>
+      <h2 style={{ color: "#007bff", marginBottom: "1.5rem" }}>View Rejected Applications</h2>
 
       {error && <div className="alert alert-danger">{error}</div>}
 
@@ -188,64 +162,49 @@ function Page() {
         <table className="table table-bordered table-hover bg-white">
           <thead className="thead-light">
             <tr>
-              <th>Certificate No</th>
               <th>Application No</th>
-              <th>Name</th>
               <th>Type</th>
-              <th>Issue Date</th>
-              <th>Issued By</th>
-              <th>Remarks</th>
+              <th>Name</th>
+              <th>Mobile</th>
+              <th>Sansad</th>
+              <th>Status</th>
+              <th>Reason</th>
+              <th>Date</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={8} className="text-center py-4">
-                  Loading...
-                </td>
+                <td colSpan={9} className="text-center py-4">Loading...</td>
               </tr>
             ) : paginated.length === 0 ? (
               <tr>
-                <td colSpan={8} className="text-center py-4">
-                  No completed applications found.
-                </td>
+                <td colSpan={9} className="text-center py-4">No rejected applications found.</td>
               </tr>
             ) : (
               paginated.map((app) => (
                 <tr key={app._id}>
-                  <td>{app.certificate_no || "-"}</td>
                   <td>{app.application_no}</td>
-                  <td>{app.name}</td>
                   <td>
                     <span className="badge badge-info text-capitalize">
                       {app.application_type}
                     </span>
                   </td>
-                  <td>{formatDate(app.issue_date)}</td>
-                  <td>{app.issued_by || "Self"}</td>
-                  <td>{app.remarks || "Application Accpected"}</td>
+                  <td>{app.name}</td>
+                  <td>{app.mobile}</td>
+                  <td>{getLabel("sansad", app.sansad)}</td>
                   <td>
-                    <div
-                      className="d-flex align-items-center"
-                      style={{ gap: "10px" }}
-                    >
-                      <FaEye
-                        title="View"
-                        style={{ color: "#007bff", cursor: "pointer" }}
-                        onClick={() => handleView(app)}
-                      />
-                      <FaDownload
-                        title="Download"
-                        style={{ color: "#28a745", cursor: "pointer" }}
-                        onClick={() => handleDownload(app)}
-                      />
-                      <FaFileAlt
-                        title="Print"
-                        style={{ color: "#6c757d", cursor: "pointer" }}
-                        onClick={() => handlePrint(app)}
-                      />
-                    </div>
+                    <span className="badge badge-danger">{app.status}</span>
+                  </td>
+                  <td>{app.remarks || "-"}</td>
+                  <td>{formatDate(app.updatedAt)}</td>
+                  <td>
+                    <FaEye
+                      title="View"
+                      style={{ color: "#007bff", cursor: "pointer" }}
+                      onClick={() => handleView(app)}
+                    />
                   </td>
                 </tr>
               ))
@@ -257,49 +216,18 @@ function Page() {
       <div className="d-flex justify-content-between align-items-center">
         <span>
           Showing {totalEntries === 0 ? 0 : pageStart + 1} to{" "}
-          {Math.min(pageStart + entriesPerPage, totalEntries)} of {totalEntries}{" "}
-          entries
+          {Math.min(pageStart + entriesPerPage, totalEntries)} of {totalEntries} entries
         </span>
         <div className="d-flex" style={{ gap: "4px" }}>
-          <button
-            className="btn btn-sm btn-outline-secondary"
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage(1)}
-          >
-            «
-          </button>
-          <button
-            className="btn btn-sm btn-outline-secondary"
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage((p) => p - 1)}
-          >
-            ‹
-          </button>
-          <button className="btn btn-sm btn-primary" disabled>
-            {currentPage}
-          </button>
-          <button
-            className="btn btn-sm btn-outline-secondary"
-            disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage((p) => p + 1)}
-          >
-            ›
-          </button>
-          <button
-            className="btn btn-sm btn-outline-secondary"
-            disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage(totalPages)}
-          >
-            »
-          </button>
+          <button className="btn btn-sm btn-outline-secondary" disabled={currentPage === 1} onClick={() => setCurrentPage(1)}>«</button>
+          <button className="btn btn-sm btn-outline-secondary" disabled={currentPage === 1} onClick={() => setCurrentPage((p) => p - 1)}>‹</button>
+          <button className="btn btn-sm btn-primary" disabled>{currentPage}</button>
+          <button className="btn btn-sm btn-outline-secondary" disabled={currentPage === totalPages} onClick={() => setCurrentPage((p) => p + 1)}>›</button>
+          <button className="btn btn-sm btn-outline-secondary" disabled={currentPage === totalPages} onClick={() => setCurrentPage(totalPages)}>»</button>
         </div>
       </div>
 
-      <Modal
-        show={showViewModal}
-        onHide={() => setShowViewModal(false)}
-        size="lg"
-      >
+      <Modal show={showViewModal} onHide={() => setShowViewModal(false)} size="lg">
         <Modal.Header closeButton>
           <Modal.Title>Application Details</Modal.Title>
         </Modal.Header>
@@ -316,21 +244,11 @@ function Page() {
                     display = "-";
                   } else if (key === "sansad") {
                     display = getLabel("sansad", value);
-                  } else if (
-                    typeof value === "object" &&
-                    !Array.isArray(value)
-                  ) {
+                  } else if (typeof value === "object" && !Array.isArray(value)) {
                     display = value.name || "-";
                   } else if (Array.isArray(value)) {
                     display = `${value.length} item(s)`;
-                  } else if (
-                    [
-                      "id_file",
-                      "tax_receipt",
-                      "member_authorization",
-                      "certificate_file",
-                    ].includes(key)
-                  ) {
+                  } else if (["id_file", "tax_receipt", "member_authorization"].includes(key)) {
                     display = null;
                   } else {
                     display = value.toString();
@@ -339,9 +257,7 @@ function Page() {
                     <div className="col-md-6 mb-2" key={key}>
                       <strong>{key.replace(/_/g, " ")}: </strong>
                       {display === null ? (
-                        <a href={value} target="_blank" rel="noreferrer">
-                          View File
-                        </a>
+                        <a href={value} target="_blank" rel="noreferrer">View File</a>
                       ) : (
                         <span>{display}</span>
                       )}
@@ -354,9 +270,7 @@ function Page() {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowViewModal(false)}>
-            Close
-          </Button>
+          <Button variant="secondary" onClick={() => setShowViewModal(false)}>Close</Button>
         </Modal.Footer>
       </Modal>
     </div>
