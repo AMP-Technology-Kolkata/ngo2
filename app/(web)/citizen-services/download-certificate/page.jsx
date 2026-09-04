@@ -1,27 +1,13 @@
 "use client";
 import React, { useState } from "react";
 import swal from "sweetalert";
-import { generateCertificateAction } from "../../../../lib/downloadCertificate.actions"
-import styles from "../../styles/CitizenSection.module.css"; // চাইলে আলাদা css module বানাও
+import { generateCertificateAction } from "../../../../lib/downloadCertificate.actions";
+import styles from "../../styles/CitizenSection.module.css";
 
 export default function DownloadCertificatePage() {
   const [applicationNo, setApplicationNo] = useState("");
   const [mobile, setMobile] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const base64ToBlob = (base64, contentType = "application/pdf") => {
-    const byteCharacters = atob(base64);
-    const byteArrays = [];
-    for (let offset = 0; offset < byteCharacters.length; offset += 512) {
-      const slice = byteCharacters.slice(offset, offset + 512);
-      const byteNumbers = new Array(slice.length);
-      for (let i = 0; i < slice.length; i++) {
-        byteNumbers[i] = slice.charCodeAt(i);
-      }
-      byteArrays.push(new Uint8Array(byteNumbers));
-    }
-    return new Blob(byteArrays, { type: contentType });
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -39,23 +25,30 @@ export default function DownloadCertificatePage() {
     fd.append("application_no", applicationNo.trim());
     fd.append("mobile", mobile.trim());
 
+    const newTab = window.open("", "_blank");
+
     setLoading(true);
     try {
       const result = await generateCertificateAction(fd);
 
-      if (!result.success) {
-        swal("Error!", result.message || "Failed to generate certificate", "error");
+      if (!result.success || !result.url) {
+        newTab?.close();
+        swal(
+          "Error!",
+          result.message || "Failed to generate certificate",
+          "error",
+        );
         return;
       }
 
-      const blob = base64ToBlob(result.base64);
-      const blobUrl = URL.createObjectURL(blob);
-      window.open(blobUrl, "_blank");
-
-      // ব্রাউজার নতুন ট্যাব খুলে নেওয়ার পরে memory থেকে url revoke করা ভালো,
-      // কিন্তু ইউজার তখনও নতুন ট্যাবে ফাইল দেখছে, তাই একটু delay দিয়ে revoke করছি
-      setTimeout(() => URL.revokeObjectURL(blobUrl), 60_000);
+      // Navigate the already-open tab to the REAL CDN URL — no blob, no base64.
+      if (newTab) {
+        newTab.location.href = result.url;
+      } else {
+        window.location.href = result.url;
+      }
     } catch (err) {
+      newTab?.close();
       console.error("Error generating certificate:", err);
       swal("Error!", "Something went wrong. Please try again.", "error");
     } finally {
@@ -71,7 +64,8 @@ export default function DownloadCertificatePage() {
             Download Your Certificate
           </h4>
           <p className="text-muted mb-4">
-            Enter your Application No and registered Mobile Number to download your certificate.
+            Enter your Application No and registered Mobile Number to download
+            your certificate.
           </p>
 
           <form onSubmit={handleSubmit}>
