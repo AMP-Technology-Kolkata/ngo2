@@ -13,40 +13,10 @@ import { FaDownload } from "react-icons/fa";
 // static services list — update title/link as needed
 const SERVICES = [
   {
-    title: "Character Certificate",
-    link: "/citizen-services/character-certificate",
-    color: "blue",
-    icon: "shield",
-  },
-  {
-    title: "Residential Certificate",
-    link: "/citizen-services/residential-certificate",
-    color: "green",
-    icon: "globe",
-  },
-  {
-    title: "Income Certificate",
-    link: "/citizen-services/income-certificate",
-    color: "cyan",
-    icon: "shield",
-  },
-  {
     title: "Unemployment Certificate",
     link: "/citizen-services/unemployment-certificate",
     color: "indigo",
     icon: "boxes",
-  },
-  {
-    title: "Caste Certificate",
-    link: "/citizen-services/caste-certificate",
-    color: "blue",
-    icon: "shield",
-  },
-  {
-    title: "Unmarried Certificate",
-    link: "/citizen-services/unmarried-certificate",
-    color: "green",
-    icon: "globe",
   },
   {
     title: "BPL Certificate",
@@ -65,6 +35,24 @@ const SERVICES = [
     link: "/citizen-services/heirship-certificate",
     color: "blue",
     icon: "boxes",
+  },
+  {
+    title: "Land NOC",
+    link: "/citizen-services/land-noc",
+    color: "green",
+    icon: "globe",
+  },
+  {
+    title: "EWS Certificate",
+    link: "/citizen-services/ews-certificate",
+    color: "cyan",
+    icon: "shield",
+  },
+  {
+    title: "Burning Certificate",
+    link: "/citizen-services/burning-certificate",
+    color: "blue",
+    icon: "shield",
   },
 ];
 

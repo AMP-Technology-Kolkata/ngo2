@@ -39,6 +39,15 @@ const initialFormData = {
   yearly_income: "",
   id_type: "",
   id_no: "",
+  // ---- EWS-only fields ----
+  resident_type: "PERMANENT_RESIDENT",
+  owner_name: "",
+  mouza: "",
+  pin_code: "",
+  voter_card_no: "",
+  aadhar_card_no: "",
+  pan_card_no: "",
+  ration_card_no: "",
 };
 
 export default function GeneralApplicationForm({
@@ -62,6 +71,7 @@ export default function GeneralApplicationForm({
     police_station: [],
     sansad: [],
     id_type: [],
+    mouza: [], // ADDED
   });
   const [masterDataLoading, setMasterDataLoading] = useState(true);
 
@@ -129,6 +139,17 @@ export default function GeneralApplicationForm({
       "religion",
       "id_type",
     ];
+
+    if (applicationType === "ews") {
+      required.push(
+        "resident_type",
+        "mouza",
+        "pin_code",
+        "voter_card_no",
+        "aadhar_card_no",
+        "pan_card_no",
+      );
+    }
     for (const field of required) {
       if (!formData[field] || formData[field].toString().trim() === "") {
         swal(
@@ -138,6 +159,15 @@ export default function GeneralApplicationForm({
         );
         return false;
       }
+    }
+
+    if (
+      applicationType === "ews" &&
+      formData.resident_type === "TENANT" &&
+      !formData.owner_name.trim()
+    ) {
+      swal("Error!", "Owner Name is required for tenants", "error");
+      return false;
     }
 
     const dobDate = new Date(formData.dob);
@@ -178,7 +208,9 @@ export default function GeneralApplicationForm({
 
     const payload = new FormData();
     payload.append("application_type", applicationType);
-    Object.entries(formData).forEach(([key, value]) => payload.append(key, value));
+    Object.entries(formData).forEach(([key, value]) =>
+      payload.append(key, value),
+    );
     payload.append("document", files.document);
     payload.append("tax_receipt", files.tax_receipt);
 
@@ -196,7 +228,11 @@ export default function GeneralApplicationForm({
         router.push(`/check-status?id=${result.data.applicationId}`);
       }
     } else {
-      swal("Error!", result.message || "Submission failed. Please try again.", "error");
+      swal(
+        "Error!",
+        result.message || "Submission failed. Please try again.",
+        "error",
+      );
     }
     setSubmitting(false);
   };
@@ -213,7 +249,9 @@ export default function GeneralApplicationForm({
     <div className={styles.wrapper}>
       <form className={styles.card} onSubmit={handleSubmit}>
         <h2 className={styles.title}>{heading}</h2>
-        <p className={styles.subtitle}>Please fill the form with correct details.</p>
+        <p className={styles.subtitle}>
+          Please fill the form with correct details.
+        </p>
 
         <div className={styles.divider} />
 
@@ -248,7 +286,11 @@ export default function GeneralApplicationForm({
           </div>
           <div className={styles.field}>
             <label>Gender *</label>
-            <select name="gender" value={formData.gender} onChange={handleChange}>
+            <select
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+            >
               <option value="">Choose Gender</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
@@ -306,14 +348,22 @@ export default function GeneralApplicationForm({
           </div>
         </div>
 
-        <button type="button" className={styles.verifyBtn} onClick={handleVerifyMobile}>
+        <button
+          type="button"
+          className={styles.verifyBtn}
+          onClick={handleVerifyMobile}
+        >
           {mobileVerified ? "Verified ✓" : "Verify"}
         </button>
 
         <div className={styles.grid4}>
           <div className={styles.field}>
             <label>Religion *</label>
-            <select name="religion" value={formData.religion} onChange={handleChange}>
+            <select
+              name="religion"
+              value={formData.religion}
+              onChange={handleChange}
+            >
               <option value="">Choose Religion</option>
               <option value="hindu">Hindu</option>
               <option value="muslim">Muslim</option>
@@ -371,6 +421,107 @@ export default function GeneralApplicationForm({
             />
           </div>
         </div>
+
+        {applicationType === "ews" && (
+          <>
+            <div className={styles.grid4}>
+              <div className={styles.field}>
+                <label>Resident Type *</label>
+                <select
+                  name="resident_type"
+                  value={formData.resident_type}
+                  onChange={handleChange}
+                >
+                  <option value="PERMANENT_RESIDENT">Permanent Resident</option>
+                  <option value="TENANT">Tenant</option>
+                </select>
+              </div>
+              {formData.resident_type === "TENANT" && (
+                <div className={styles.field}>
+                  <label>Owner Name (If Tenant) *</label>
+                  <input
+                    type="text"
+                    name="owner_name"
+                    placeholder="Enter Owner Name"
+                    value={formData.owner_name}
+                    onChange={handleChange}
+                  />
+                </div>
+              )}
+              <div className={styles.field}>
+                <label>Mouza *</label>
+                <select
+                  name="mouza"
+                  value={formData.mouza}
+                  onChange={handleChange}
+                  disabled={masterDataLoading}
+                >
+                  <option value="">
+                    {masterDataLoading ? "Loading..." : "Choose Mouza"}
+                  </option>
+                  {masterData.mouza.map((m) => (
+                    <option key={m._id} value={m._id}>
+                      {m.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className={styles.field}>
+                <label>Pin Code *</label>
+                <input
+                  type="text"
+                  name="pin_code"
+                  placeholder="Enter Pin Code"
+                  value={formData.pin_code}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            <div className={styles.grid4}>
+              <div className={styles.field}>
+                <label>Voter Card No *</label>
+                <input
+                  type="text"
+                  name="voter_card_no"
+                  placeholder="Enter Voter Card No"
+                  value={formData.voter_card_no}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className={styles.field}>
+                <label>Aadhar Card No *</label>
+                <input
+                  type="text"
+                  name="aadhar_card_no"
+                  placeholder="Enter Aadhar Card No"
+                  value={formData.aadhar_card_no}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className={styles.field}>
+                <label>Pan Card No *</label>
+                <input
+                  type="text"
+                  name="pan_card_no"
+                  placeholder="Enter Pan Card No"
+                  value={formData.pan_card_no}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className={styles.field}>
+                <label>Ration Card / Tax Receipt / RHS No.</label>
+                <input
+                  type="text"
+                  name="ration_card_no"
+                  placeholder="Ration Card / Tax Receipt / RHS No."
+                  value={formData.ration_card_no}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+          </>
+        )}
 
         <div className={styles.divider} />
 
@@ -444,7 +595,12 @@ export default function GeneralApplicationForm({
           </div>
           <div className={styles.field}>
             <label>Gram Panchayet *</label>
-            <input type="text" name="gp" value={formData.gp} onChange={handleChange} />
+            <input
+              type="text"
+              name="gp"
+              value={formData.gp}
+              onChange={handleChange}
+            />
           </div>
           <div className={styles.field}>
             <label>Sansad *</label>
@@ -532,7 +688,11 @@ export default function GeneralApplicationForm({
 
         <div className={styles.captchaSection}>
           <div className={styles.captchaPreview}>{captcha}</div>
-          <button type="button" className={styles.refreshBtn} onClick={refreshCaptcha}>
+          <button
+            type="button"
+            className={styles.refreshBtn}
+            onClick={refreshCaptcha}
+          >
             ↻
           </button>
           <input
@@ -553,10 +713,18 @@ export default function GeneralApplicationForm({
         </label>
 
         <div className={styles.actions}>
-          <button type="submit" className={styles.submitBtn} disabled={submitting}>
+          <button
+            type="submit"
+            className={styles.submitBtn}
+            disabled={submitting}
+          >
             {submitting ? "Submitting..." : "Submit"}
           </button>
-          <button type="button" className={styles.resetBtn} onClick={handleReset}>
+          <button
+            type="button"
+            className={styles.resetBtn}
+            onClick={handleReset}
+          >
             Reset
           </button>
           <button

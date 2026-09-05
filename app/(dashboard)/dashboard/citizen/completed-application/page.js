@@ -98,7 +98,7 @@ function Page() {
 
   // TODO: confirm actual field name / endpoint that holds the certificate PDF url
   const handleDownload = (app) => {
-    if (!app.certificate_file) {
+    if (!app.certificate_url) {
       swal(
         "Not available",
         "Certificate file URL not found for this record",
@@ -106,11 +106,11 @@ function Page() {
       );
       return;
     }
-    window.open(app.certificate_file, "_blank");
+    window.open(app.certificate_url, "_blank");
   };
 
   const handlePrint = (app) => {
-    if (!app.certificate_file) {
+    if (!app.certificate_url) {
       swal(
         "Not available",
         "Certificate file URL not found for this record",
@@ -118,7 +118,7 @@ function Page() {
       );
       return;
     }
-    const win = window.open(app.certificate_file, "_blank");
+    const win = window.open(app.certificate_url, "_blank");
     win?.addEventListener("load", () => win.print());
   };
 

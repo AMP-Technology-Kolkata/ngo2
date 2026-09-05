@@ -1,10 +1,13 @@
 import { notFound } from "next/navigation";
-import { getApplicationConfig } from "../../../../lib/applicationTypes.config";
+import {
+  getApplicationConfig,
+  APPLICATION_CONFIGS,
+} from "../../../../lib/applicationTypes.config";
 import GeneralApplicationForm from "../../components/GeneralApplicationForm";
+import LandNocForm from "../../components/LandNocForm";
+import BurningForm from "../../components/BurningForm";
 
-// Pre-render known slugs at build time (optional but good for SEO/perf)
 export function generateStaticParams() {
-  const { APPLICATION_CONFIGS } = require("../../../../lib/applicationTypes.config");
   return Object.keys(APPLICATION_CONFIGS).map((slug) => ({ type: slug }));
 }
 
@@ -13,41 +16,24 @@ export function generateMetadata({ params }) {
   return { title: config ? config.heading : "Citizen Service" };
 }
 
-export default function DynamicCertificatePage({ params }) {
-  const config = getApplicationConfig(params.type);
-
-  // Unknown slug -> 404 (also prevents clash with /heirship-certificate style routes)
-  if (!config) return notFound();
-
-  async function submitApplication(formData) {
+function makeSubmitHandler(endpoint) {
+  return async function submit(payload) {
     "use server";
     try {
-      console.log(`=== [${config.applicationType}] FORM DATA RECEIVED ===`);
-      for (const [key, value] of formData.entries()) {
-        if (value instanceof File) {
-          console.log(key, "=> FILE:", value.name, value.size, "bytes", value.type);
-        } else {
-          console.log(key, "=>", value);
-        }
-      }
-      console.log("=== END FORM DATA ===");
-
-      const url = `${process.env.BACKLINK}/public/save_application`;
-      console.log("Calling:", url);
+      const url = `${process.env.BACKLINK}/public/${endpoint}`;
+      const isFormData = payload instanceof FormData;
 
       const res = await fetch(url, {
         method: "POST",
         headers: {
+          ...(isFormData ? {} : { "Content-Type": "application/json" }),
           "x-api-key": process.env.API_KEY,
           "office-id": process.env.OFFICE,
         },
-        body: formData,
+        body: isFormData ? payload : JSON.stringify(payload),
       });
 
       const rawText = await res.text();
-      console.log("=== BACKEND STATUS:", res.status, "===");
-      console.log("=== BACKEND RAW RESPONSE:", rawText, "===");
-
       let data;
       try {
         data = JSON.parse(rawText);
@@ -68,18 +54,33 @@ export default function DynamicCertificatePage({ params }) {
         return { success: false, message: backendMsg };
       }
 
-      return { success: true, data };
+      return { success: true, data: data?.data || data };
     } catch (error) {
-      console.log("=== CATCH BLOCK HIT ===", error?.message);
       return { success: false, message: error?.message || "Submission failed" };
     }
+  };
+}
+
+export default function DynamicCertificatePage({ params }) {
+  const config = getApplicationConfig(params.type);
+
+  if (!config) return notFound();
+
+  const submit = makeSubmitHandler(config.endpoint);
+
+  if (config.component === "land_noc") {
+    return <LandNocForm submitLandNoc={submit} />;
+  }
+
+  if (config.component === "burning") {
+    return <BurningForm submitBurning={submit} />;
   }
 
   return (
     <GeneralApplicationForm
       applicationType={config.applicationType}
       heading={config.heading}
-      submitApplication={submitApplication}
+      submitApplication={submit}
     />
   );
 }
